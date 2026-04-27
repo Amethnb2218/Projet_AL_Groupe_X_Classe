@@ -45,7 +45,7 @@ def call_soap(base_url: str, operation: str, **fields: str):
     try:
         root = fromstring(response.content)
     except ParseError as exc:
-        raise RuntimeError(f"Reponse SOAP illisible: {exc}") from exc
+        raise RuntimeError(f"Réponse SOAP illisible : {exc}") from exc
     status = find_text(root, "status")
     if response.status_code >= 400 or status == "error":
         raise RuntimeError(find_text(root, "message", f"Erreur HTTP {response.status_code}"))
@@ -72,39 +72,40 @@ def print_users(users) -> None:
     if not users:
         print("Aucun utilisateur.")
         return
-    print("\nID | Login | Nom complet | Role")
+    print("\nID | Login | Nom complet | Rôle")
     print("-" * 44)
     for user in users:
-        print(f"{user['id']} | {user['login']} | {user['full_name']} | {user['role']}")
+        role_label = "Administrateur" if user["role"] == "admin" else "Éditeur"
+        print(f"{user['id']} | {user['login']} | {user['full_name']} | {role_label}")
 
 
 def prompt_role() -> str:
-    role = input("Role (editor/admin) [editor]: ").strip() or "editor"
+    role = input("Rôle (editor/admin) [editor] : ").strip() or "editor"
     if role not in {"editor", "admin"}:
-        print("Role invalide, valeur editor utilisee.")
+        print("Rôle invalide, valeur editor utilisée.")
         return "editor"
     return role
 
 
 def main() -> None:
     print("Client d'administration des utilisateurs - AL News")
-    base_url = input("URL du site [http://127.0.0.1:5000]: ").strip() or "http://127.0.0.1:5000"
-    login = input("Login: ").strip()
-    password = getpass.getpass("Mot de passe: ")
+    base_url = input("URL du site [http://127.0.0.1:5000] : ").strip() or "http://127.0.0.1:5000"
+    login = input("Login : ").strip()
+    password = getpass.getpass("Mot de passe : ")
 
     try:
         auth = call_soap(base_url, "authenticateUser", login=login, password=password)
     except RuntimeError as exc:
-        print(f"Authentification refusee: {exc}")
+        print(f"Authentification refusée : {exc}")
         return
 
     role = find_text(auth, "role")
     if role != "admin":
-        print("Acces refuse: seul un administrateur peut gerer les utilisateurs.")
+        print("Accès refusé : seul un administrateur peut gérer les utilisateurs.")
         return
 
-    token = getpass.getpass("Jeton SOAP administrateur: ").strip()
-    print("Authentification reussie.")
+    token = getpass.getpass("Jeton SOAP administrateur : ").strip()
+    print("Authentification réussie.")
 
     while True:
         print("\n1. Lister les utilisateurs")
@@ -121,34 +122,34 @@ def main() -> None:
             elif choice == "2":
                 fields = {
                     "token": token,
-                    "login": input("Login: ").strip(),
-                    "full_name": input("Nom complet: ").strip(),
+                    "login": input("Login : ").strip(),
+                    "full_name": input("Nom complet : ").strip(),
                     "role": prompt_role(),
-                    "password": getpass.getpass("Mot de passe: "),
+                    "password": getpass.getpass("Mot de passe : "),
                 }
                 root = call_soap(base_url, "addUser", **fields)
                 print_users(users_from_response(root))
             elif choice == "3":
                 fields = {
                     "token": token,
-                    "id": input("ID utilisateur: ").strip(),
-                    "login": input("Nouveau login: ").strip(),
-                    "full_name": input("Nouveau nom complet: ").strip(),
+                    "id": input("ID utilisateur : ").strip(),
+                    "login": input("Nouveau login : ").strip(),
+                    "full_name": input("Nouveau nom complet : ").strip(),
                     "role": prompt_role(),
-                    "password": getpass.getpass("Nouveau mot de passe (vide = inchange): "),
+                    "password": getpass.getpass("Nouveau mot de passe (vide = inchangé) : "),
                 }
                 root = call_soap(base_url, "updateUser", **fields)
                 print_users(users_from_response(root))
             elif choice == "4":
-                user_id = input("ID utilisateur a supprimer: ").strip()
+                user_id = input("ID utilisateur à supprimer : ").strip()
                 call_soap(base_url, "deleteUser", token=token, id=user_id)
-                print("Utilisateur supprime.")
+                print("Utilisateur supprimé.")
             elif choice == "0":
                 break
             else:
                 print("Choix invalide.")
         except RuntimeError as exc:
-            print(f"Erreur: {exc}")
+            print(f"Erreur : {exc}")
 
 
 if __name__ == "__main__":

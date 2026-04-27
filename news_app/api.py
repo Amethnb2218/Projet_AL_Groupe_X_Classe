@@ -86,7 +86,7 @@ def grouped_articles():
 def category_articles(category_id: int):
     category = services.get_category(category_id)
     if category is None:
-        return jsonify({"error": "Categorie introuvable."}), 404
+        return jsonify({"error": "Catégorie introuvable."}), 404
     rows = services.list_articles(category_id=category_id)
     if prefers_xml():
         root = Element("category", id=str(category["id"]))

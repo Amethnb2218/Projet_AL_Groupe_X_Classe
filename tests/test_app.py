@@ -38,12 +38,12 @@ def client(app):
 @pytest.fixture()
 def sample_content(app):
     with app.app_context():
-        category = services.create_category("Technologie", "Articles sur le numerique.")
-        editor = services.create_user("editor", "Editeur", "editor", "editor123")
+        category = services.create_category("Technologie", "Articles sur le numérique.")
+        editor = services.create_user("editor", "Éditeur", "editor", "editor123")
         article = services.create_article(
-            "Architecture propre pour une redaction",
-            "Un article de test publie pour verifier les parcours publics.",
-            "Contenu complet de l'article utilise par les tests.",
+            "Architecture propre pour une rédaction",
+            "Un article de test publié pour vérifier les parcours publics.",
+            "Contenu complet de l'article utilisé par les tests.",
             category["id"],
             editor["id"],
             True,
@@ -70,7 +70,7 @@ def login(client, login_name="admin", password="admin123"):
 def test_initial_database_contains_only_required_admin(client):
     response = client.get("/")
     assert response.status_code == 200
-    assert b"Aucun article publie" in response.data
+    assert "Aucun article publié".encode("utf-8") in response.data
 
     categories = client.get("/api/articles/grouped")
     assert categories.status_code == 200
@@ -162,7 +162,7 @@ def test_admin_can_create_replace_and_remove_article_image(client, app):
         "/editor/articles/new",
         data={
             "title": "Article avec image",
-            "summary": "Resume",
+            "summary": "Résumé",
             "content": "Contenu",
             "category_id": "1",
             "published": "on",
@@ -183,7 +183,7 @@ def test_admin_can_create_replace_and_remove_article_image(client, app):
         f"/editor/articles/{article['id']}/edit",
         data={
             "title": "Article avec image",
-            "summary": "Resume",
+            "summary": "Résumé",
             "content": "Contenu",
             "category_id": "1",
             "published": "on",
@@ -231,7 +231,7 @@ def test_admin_can_delete_user_with_articles(client, sample_content):
     editor_id = sample_content["editor"]["id"]
     response = client.post(f"/admin/users/{editor_id}/delete", follow_redirects=True)
     assert response.status_code == 200
-    assert b"Utilisateur supprime" in response.data
+    assert "Utilisateur supprimé".encode("utf-8") in response.data
     assert client.get("/articles/architecture-propre-pour-une-redaction").status_code == 200
 
 
@@ -240,5 +240,5 @@ def test_editor_can_delete_category_with_articles(client, sample_content):
     category_id = sample_content["category"]["id"]
     response = client.post(f"/editor/categories/{category_id}/delete", follow_redirects=True)
     assert response.status_code == 200
-    assert b"Categorie supprimee" in response.data
+    assert "Catégorie supprimée".encode("utf-8") in response.data
     assert client.get("/articles/architecture-propre-pour-une-redaction").status_code == 200

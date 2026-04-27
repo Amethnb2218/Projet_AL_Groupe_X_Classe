@@ -54,7 +54,7 @@ def get_user(user_id: int):
 
 def create_user(login: str, full_name: str, role: str, password: str):
     if role not in {"editor", "admin"}:
-        raise ValueError("Le role doit etre editor ou admin.")
+        raise ValueError("Le rôle doit être editor ou admin.")
     db = get_db()
     cursor = db.execute(
         """
@@ -69,7 +69,7 @@ def create_user(login: str, full_name: str, role: str, password: str):
 
 def update_user(user_id: int, login: str, full_name: str, role: str, password: str | None = None):
     if role not in {"editor", "admin"}:
-        raise ValueError("Le role doit etre editor ou admin.")
+        raise ValueError("Le rôle doit être editor ou admin.")
     db = get_db()
     if password:
         db.execute(
@@ -151,9 +151,9 @@ def list_articles(limit: int | None = None, offset: int = 0, category_id: int | 
     sql = f"""
         SELECT
             a.*,
-            COALESCE(c.name, 'Sans categorie') AS category_name,
+            COALESCE(c.name, 'Sans catégorie') AS category_name,
             c.slug AS category_slug,
-            COALESCE(u.full_name, 'Utilisateur supprime') AS author_name
+            COALESCE(u.full_name, 'Utilisateur supprimé') AS author_name
         FROM articles a
         LEFT JOIN categories c ON c.id = a.category_id
         LEFT JOIN users u ON u.id = a.author_id
@@ -171,9 +171,9 @@ def list_all_articles_for_admin():
         """
         SELECT
             a.*,
-            COALESCE(c.name, 'Sans categorie') AS category_name,
+            COALESCE(c.name, 'Sans catégorie') AS category_name,
             c.slug AS category_slug,
-            COALESCE(u.full_name, 'Utilisateur supprime') AS author_name
+            COALESCE(u.full_name, 'Utilisateur supprimé') AS author_name
         FROM articles a
         LEFT JOIN categories c ON c.id = a.category_id
         LEFT JOIN users u ON u.id = a.author_id
@@ -198,9 +198,9 @@ def get_article(article_id: int):
         """
         SELECT
             a.*,
-            COALESCE(c.name, 'Sans categorie') AS category_name,
+            COALESCE(c.name, 'Sans catégorie') AS category_name,
             c.slug AS category_slug,
-            COALESCE(u.full_name, 'Utilisateur supprime') AS author_name
+            COALESCE(u.full_name, 'Utilisateur supprimé') AS author_name
         FROM articles a
         LEFT JOIN categories c ON c.id = a.category_id
         LEFT JOIN users u ON u.id = a.author_id
@@ -215,9 +215,9 @@ def get_article_by_slug(slug: str):
         """
         SELECT
             a.*,
-            COALESCE(c.name, 'Sans categorie') AS category_name,
+            COALESCE(c.name, 'Sans catégorie') AS category_name,
             c.slug AS category_slug,
-            COALESCE(u.full_name, 'Utilisateur supprime') AS author_name
+            COALESCE(u.full_name, 'Utilisateur supprimé') AS author_name
         FROM articles a
         LEFT JOIN categories c ON c.id = a.category_id
         LEFT JOIN users u ON u.id = a.author_id
@@ -229,7 +229,7 @@ def get_article_by_slug(slug: str):
 
 def create_article(title: str, summary: str, content: str, category_id: int, author_id: int, published: bool):
     if get_category(category_id) is None:
-        raise ValueError("Veuillez creer une categorie avant d'ajouter un article.")
+        raise ValueError("Veuillez créer une catégorie avant d'ajouter un article.")
     db = get_db()
     now = utc_now()
     cursor = db.execute(
@@ -264,7 +264,7 @@ def update_article(
     published: bool,
 ):
     if get_category(category_id) is None:
-        raise ValueError("Veuillez choisir une categorie existante.")
+        raise ValueError("Veuillez choisir une catégorie existante.")
     db = get_db()
     db.execute(
         """
@@ -343,7 +343,7 @@ def create_token(label: str, created_by: int):
         INSERT INTO api_tokens (label, token, created_by, created_at)
         VALUES (?, ?, ?, ?)
         """,
-        (label.strip() or "Jeton sans libelle", token, created_by, utc_now()),
+        (label.strip() or "Jeton sans libellé", token, created_by, utc_now()),
     )
     db.commit()
     return db.execute("SELECT * FROM api_tokens WHERE id = ?", (cursor.lastrowid,)).fetchone()

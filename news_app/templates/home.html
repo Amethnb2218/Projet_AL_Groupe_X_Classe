@@ -2,9 +2,9 @@
 {% block title %}Accueil - AL News{% endblock %}
 {% block content %}
 <section class="front-masthead">
-    <p class="eyebrow">Journal numerique</p>
-    <h1>L'information qui relie technologie, economie et culture.</h1>
-    <p>Analyses, reportages et dossiers publies par une redaction tournee vers les nouveaux usages.</p>
+    <p class="eyebrow">Journal numérique</p>
+    <h1>L'information qui relie technologie, économie et culture.</h1>
+    <p>Analyses, reportages et dossiers publiés par une rédaction tournée vers les nouveaux usages.</p>
 </section>
 
 {% if articles %}
@@ -15,7 +15,7 @@
             <span>{{ featured.category_name }}</span>
         </a>
         <div class="hero-copy">
-            <div class="kicker">A la une &middot; {{ featured.category_name }}</div>
+            <div class="kicker">À la une &middot; {{ featured.category_name }}</div>
             <h1><a href="{{ url_for('web.article_detail', slug=featured.slug) }}">{{ featured.title }}</a></h1>
             <p>{{ featured.summary }}</p>
             <div class="story-meta">
@@ -26,13 +26,13 @@
         </div>
     </section>
 {% else %}
-    <div class="empty-state">Aucun article publie pour le moment.</div>
+    <div class="empty-state">Aucun article publié pour le moment.</div>
 {% endif %}
 
 <div class="section-heading">
     <div>
         <h2>Derniers articles</h2>
-        <p>Selection editoriale des publications les plus recentes.</p>
+        <p>Sélection éditoriale des publications les plus récentes.</p>
     </div>
 </div>
 
@@ -58,9 +58,9 @@
 
 <div class="pager">
     {% if has_previous %}
-        <a class="button" href="{{ url_for('web.home', page=page - 1) }}">Precedent</a>
+        <a class="button" href="{{ url_for('web.home', page=page - 1) }}">Précédent</a>
     {% else %}
-        <span class="button disabled">Precedent</span>
+        <span class="button disabled">Précédent</span>
     {% endif %}
     <span>Page {{ page }}</span>
     {% if has_next %}

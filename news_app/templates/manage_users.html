@@ -5,7 +5,7 @@
     <div>
         <p class="eyebrow">Administration</p>
         <h1>Gestion des utilisateurs</h1>
-        <p>Reserve aux administrateurs.</p>
+        <p>Réservé aux administrateurs.</p>
     </div>
 </div>
 
@@ -19,7 +19,7 @@
         <strong>{{ users|selectattr("role", "equalto", "admin")|list|length }}</strong>
     </div>
     <div class="metric-card">
-        <span>Editeurs</span>
+        <span>Éditeurs</span>
         <strong>{{ users|selectattr("role", "equalto", "editor")|list|length }}</strong>
     </div>
 </div>
@@ -37,9 +37,9 @@
                 <input name="full_name" required>
             </label>
             <label>
-                Role
+                Rôle
                 <select name="role">
-                    <option value="editor">Editeur</option>
+                    <option value="editor">Éditeur</option>
                     <option value="admin">Administrateur</option>
                 </select>
             </label>
@@ -57,7 +57,7 @@
                 <tr>
                     <th>Login</th>
                     <th>Nom</th>
-                    <th>Role</th>
+                    <th>Rôle</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -66,7 +66,7 @@
                     <tr>
                         <td><strong>{{ user.login }}</strong></td>
                         <td>{{ user.full_name }}</td>
-                        <td><span class="badge {{ 'admin' if user.role == 'admin' else 'success' }}">{{ user.role }}</span></td>
+                        <td><span class="badge {{ 'admin' if user.role == 'admin' else 'success' }}">{{ "Éditeur" if user.role == "editor" else "Administrateur" }}</span></td>
                         <td class="actions">
                             <a class="button small" href="{{ url_for('web.edit_user', user_id=user.id) }}">Modifier</a>
                             <form method="post" action="{{ url_for('web.delete_user', user_id=user.id) }}">

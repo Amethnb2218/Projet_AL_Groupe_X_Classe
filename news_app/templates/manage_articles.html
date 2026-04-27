@@ -3,7 +3,7 @@
 {% block content %}
 <div class="page-title">
     <div>
-        <p class="eyebrow">Redaction</p>
+        <p class="eyebrow">Rédaction</p>
         <h1>Gestion des articles</h1>
         <p>Liste, ajout, modification et suppression des articles.</p>
     </div>
@@ -16,12 +16,12 @@
         <strong>{{ articles|length }}</strong>
     </div>
     <div class="metric-card">
-        <span>Publies</span>
+        <span>Publiés</span>
         <strong>{{ articles|selectattr("published")|list|length }}</strong>
     </div>
     <div class="metric-card">
         <span>Workflow</span>
-        <strong>Editeur</strong>
+        <strong>Éditeur</strong>
     </div>
 </div>
 
@@ -30,7 +30,7 @@
         <thead>
             <tr>
                 <th>Titre</th>
-                <th>Categorie</th>
+                <th>Catégorie</th>
                 <th>Statut</th>
                 <th>Actions</th>
             </tr>
@@ -40,7 +40,7 @@
                 <tr>
                     <td><strong>{{ article.title }}</strong></td>
                     <td>{{ article.category_name }}</td>
-                    <td><span class="badge {{ 'success' if article.published else 'muted' }}">{{ "Publie" if article.published else "Brouillon" }}</span></td>
+                    <td><span class="badge {{ 'success' if article.published else 'muted' }}">{{ "Publié" if article.published else "Brouillon" }}</span></td>
                     <td class="actions">
                         <a class="button small" href="{{ url_for('web.edit_article', article_id=article.id) }}">Modifier</a>
                         <form method="post" action="{{ url_for('web.delete_article', article_id=article.id) }}">

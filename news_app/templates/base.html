@@ -15,10 +15,10 @@
             </a>
             <nav class="main-nav" aria-label="Navigation principale">
                 <a href="{{ url_for('web.home') }}">Accueil</a>
-                <a href="{{ url_for('web.categories') }}">Categories</a>
+                <a href="{{ url_for('web.categories') }}">Catégories</a>
                 {% if g.user %}
                     <a href="{{ url_for('web.manage_articles') }}">Articles</a>
-                    <a href="{{ url_for('web.manage_categories') }}">Gestion categories</a>
+                    <a href="{{ url_for('web.manage_categories') }}">Gestion catégories</a>
                     {% if g.user.role == 'admin' %}
                         <a href="{{ url_for('web.manage_users') }}">Utilisateurs</a>
                         <a href="{{ url_for('web.manage_tokens') }}">Jetons</a>
@@ -27,9 +27,9 @@
             </nav>
             <div class="session">
                 {% if g.user %}
-                    <span>{{ g.user.full_name }} ({{ g.user.role }})</span>
+                    <span>{{ g.user.full_name }} ({{ "Éditeur" if g.user.role == "editor" else "Administrateur" }})</span>
                     <form method="post" action="{{ url_for('web.logout') }}">
-                        <button type="submit" class="button subtle">Deconnexion</button>
+                        <button type="submit" class="button subtle">Déconnexion</button>
                     </form>
                 {% else %}
                     <a class="button subtle" href="{{ url_for('web.login') }}">Connexion</a>
@@ -38,8 +38,8 @@
         </div>
         <div class="edition-strip">
             <div class="edition-inner">
-                <span>Edition premium</span>
-                <strong>Actualite, analyses et dossiers</strong>
+                <span>Édition premium</span>
+                <strong>Actualité, analyses et dossiers</strong>
                 <span>Architecture logicielle</span>
             </div>
         </div>
@@ -69,7 +69,7 @@
                 </a>
                 <a href="{{ url_for('soap.soap_endpoint') }}">
                     <span>SOAP</span>
-                    <strong>Users</strong>
+                    <strong>Utilisateurs</strong>
                 </a>
             </div>
         </aside>
@@ -96,7 +96,7 @@
 
     <footer class="footer">
         <span>AL News</span>
-        <span>Journal numerique independant</span>
+        <span>Journal numérique indépendant</span>
     </footer>
 </body>
 </html>

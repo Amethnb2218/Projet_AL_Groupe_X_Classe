@@ -13,9 +13,9 @@
             <input name="full_name" required value="{{ user.full_name }}">
         </label>
         <label>
-            Role
+            Rôle
             <select name="role">
-                <option value="editor" {% if user.role == 'editor' %}selected{% endif %}>Editeur</option>
+                <option value="editor" {% if user.role == 'editor' %}selected{% endif %}>Éditeur</option>
                 <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrateur</option>
             </select>
         </label>

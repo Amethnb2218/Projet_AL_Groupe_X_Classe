@@ -13,7 +13,7 @@ def format_date_fr(value: str) -> str:
         parsed = datetime.fromisoformat(value)
     except (TypeError, ValueError):
         return value
-    return parsed.strftime("%d/%m/%Y a %Hh%M")
+    return parsed.strftime("%d/%m/%Y à %Hh%M")
 
 
 def create_app(test_config: dict | None = None) -> Flask:

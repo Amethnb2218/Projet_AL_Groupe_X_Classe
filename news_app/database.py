@@ -55,17 +55,20 @@ def seed_editorial_content() -> None:
     admin_id = admin["id"]
 
     categories = [
-        ("Technologie", "technologie", "Architecture, innovation et usages numeriques."),
-        ("Economie", "economie", "Entreprises, investissements et transformation des marches."),
-        ("Culture", "culture", "Creation, medias, livres, festivals et nouveaux publics."),
+        ("Technologie", "technologie", "Architecture, innovation et usages numériques."),
+        ("Économie", "economie", "Entreprises, investissements et transformation des marchés."),
+        ("Culture", "culture", "Création, médias, livres, festivals et nouveaux publics."),
         ("International", "international", "Cooperation, politiques publiques et enjeux mondiaux."),
-        ("Sciences", "sciences", "Recherche, sante, environnement et donnees."),
+        ("Sciences", "sciences", "Recherche, santé, environnement et données."),
     ]
     for name, slug, description in categories:
         db.execute(
             """
-            INSERT OR IGNORE INTO categories (name, slug, description, created_at)
+            INSERT INTO categories (name, slug, description, created_at)
             VALUES (?, ?, ?, ?)
+            ON CONFLICT(slug) DO UPDATE SET
+                name = excluded.name,
+                description = excluded.description
             """,
             (name, slug, description, now),
         )
@@ -76,59 +79,59 @@ def seed_editorial_content() -> None:
 
     articles = [
         (
-            "Education numerique : les plateformes cherchent la fiabilite",
+            "Éducation numérique : les plateformes cherchent la fiabilité",
             "education-numerique-plateformes-fiabilite",
-            "Les etablissements renforcent leurs outils en ligne pour mieux suivre les parcours des apprenants.",
-            "Les plateformes educatives doivent supporter les inscriptions, les contenus, les evaluations et les statistiques sans perdre en clarte. Une architecture bien separee aide les equipes a faire evoluer les modules de cours, d'administration et de reporting. Elle permet aussi de connecter les services a d'autres applications tout en gardant des droits d'acces coherents.",
+            "Les établissements renforcent leurs outils en ligne pour mieux suivre les parcours des apprenants.",
+            "Les plateformes éducatives doivent supporter les inscriptions, les contenus, les évaluations et les statistiques sans perdre en clarté. Une architecture bien séparée aide les équipes à faire évoluer les modules de cours, d'administration et de reporting. Elle permet aussi de connecter les services à d'autres applications tout en gardant des droits d'accès cohérents.",
             "Sciences",
         ),
         (
-            "Presse locale : les donnees ouvertes changent l'enquete",
+            "Presse locale : les données ouvertes changent l'enquête",
             "presse-locale-donnees-ouvertes",
-            "Les redactions utilisent davantage les jeux de donnees publics pour produire des formats utiles.",
-            "Les journalistes croisent des donnees ouvertes avec leurs observations de terrain pour expliquer les transports, les budgets, la sante ou l'environnement. Les sites d'actualite doivent donc publier des contenus consultables, classes par categorie et reutilisables par des services web. Cette logique donne plus de valeur au travail editorial.",
-            "Economie",
+            "Les rédactions utilisent davantage les jeux de données publics pour produire des formats utiles.",
+            "Les journalistes croisent des données ouvertes avec leurs observations de terrain pour expliquer les transports, les budgets, la santé ou l'environnement. Les sites d'actualité doivent donc publier des contenus consultables, classés par catégorie et réutilisables par des services web. Cette logique donne plus de valeur au travail éditorial.",
+            "Économie",
         ),
         (
-            "Sante numerique : proteger les parcours patients",
+            "Santé numérique : protéger les parcours patients",
             "sante-numerique-proteger-parcours-patients",
-            "Les applications de sante rappellent l'importance des roles, des jetons et de la tracabilite.",
-            "La transformation numerique de la sante exige des interfaces simples et des controles stricts. Les administrateurs gerent les acces, les editeurs maintiennent les contenus et les visiteurs consultent les informations publiques. Cette separation des responsabilites reduit les erreurs et renforce la confiance dans les services.",
+            "Les applications de santé rappellent l'importance des rôles, des jetons et de la traçabilité.",
+            "La transformation numérique de la santé exige des interfaces simples et des contrôles stricts. Les administrateurs gèrent les accès, les éditeurs maintiennent les contenus et les visiteurs consultent les informations publiques. Cette séparation des responsabilités réduit les erreurs et renforce la confiance dans les services.",
             "Sciences",
         ),
         (
-            "Cooperation regionale : connecter les services publics",
+            "Coopération régionale : connecter les services publics",
             "cooperation-regionale-connecter-services-publics",
-            "Les administrations misent sur des interfaces interoperables pour simplifier les demarches.",
-            "Les services publics gagnent en efficacite lorsqu'ils exposent des informations fiables a travers des API. Les applications externes peuvent lire les donnees sans dupliquer la logique interne. REST facilite la consultation, tandis que SOAP reste utile pour les operations encadrees par un contrat strict et un jeton d'authentification.",
+            "Les administrations misent sur des interfaces interopérables pour simplifier les démarches.",
+            "Les services publics gagnent en efficacité lorsqu'ils exposent des informations fiables à travers des API. Les applications externes peuvent lire les données sans dupliquer la logique interne. REST facilite la consultation, tandis que SOAP reste utile pour les opérations encadrées par un contrat strict et un jeton d'authentification.",
             "International",
         ),
         (
-            "Culture numerique : les festivals inventent un nouveau public",
+            "Culture numérique : les festivals inventent un nouveau public",
             "culture-numerique-festivals-nouveau-public",
-            "Les evenements hybrides rapprochent les spectateurs en ligne et sur place.",
-            "Les festivals utilisent les plateformes web pour publier des programmes, partager des critiques et conserver des archives accessibles. Un bon site editorial ne se limite pas a afficher des textes : il organise les categories, met en valeur les articles et facilite le travail des editeurs qui maintiennent les contenus au quotidien.",
+            "Les événements hybrides rapprochent les spectateurs en ligne et sur place.",
+            "Les festivals utilisent les plateformes web pour publier des programmes, partager des critiques et conserver des archives accessibles. Un bon site éditorial ne se limite pas à afficher des textes : il organise les catégories, met en valeur les articles et facilite le travail des éditeurs qui maintiennent les contenus au quotidien.",
             "Culture",
         ),
         (
-            "Startups africaines : la qualite logicielle devient strategique",
+            "Startups africaines : la qualité logicielle devient stratégique",
             "startups-africaines-qualite-logicielle-strategique",
             "Les jeunes entreprises renforcent leurs bases techniques pour grandir sans fragiliser leurs produits.",
-            "Lorsqu'une application attire plus d'utilisateurs, les raccourcis techniques deviennent visibles. Les equipes qui investissent dans une architecture claire, des tests et une documentation solide reduisent les couts futurs. La qualite du code devient alors un avantage concurrentiel aussi important que la rapidite de lancement.",
-            "Economie",
+            "Lorsqu'une application attire plus d'utilisateurs, les raccourcis techniques deviennent visibles. Les équipes qui investissent dans une architecture claire, des tests et une documentation solide réduisent les coûts futurs. La qualité du code devient alors un avantage concurrentiel aussi important que la rapidité de lancement.",
+            "Économie",
         ),
         (
-            "Gouvernance des donnees : pourquoi les API comptent",
+            "Gouvernance des données : pourquoi les API comptent",
             "gouvernance-donnees-pourquoi-api-comptent",
-            "Les services web rendent les fonctionnalites metier accessibles sans dupliquer l'application.",
-            "Une API bien concue permet a un site d'actualite d'ouvrir ses articles a d'autres outils, tout en gardant une seule source de verite. Le format JSON sert les usages modernes et le XML reste pertinent pour certaines integrations. L'essentiel est de separer clairement consultation publique et operations protegees.",
+            "Les services web rendent les fonctionnalités métier accessibles sans dupliquer l'application.",
+            "Une API bien conçue permet à un site d'actualité d'ouvrir ses articles à d'autres outils, tout en gardant une seule source de vérité. Le format JSON sert les usages modernes et le XML reste pertinent pour certaines intégrations. L'essentiel est de séparer clairement consultation publique et opérations protégées.",
             "Technologie",
         ),
         (
-            "Cybersouverainete : les equipes techniques reprennent la main",
+            "Cybersouveraineté : les équipes techniques reprennent la main",
             "cybersouverainete-equipes-techniques-reprennent-main",
             "Les organisations structurent leurs applications autour de composants auditables et maintenables.",
-            "Face aux risques de dependance, les equipes techniques privilegient les architectures explicites, documentees et testees. Les couches de presentation, de services et de donnees sont separees pour faciliter les audits et les evolutions. Cette demarche donne plus d'autonomie aux organisations et protege mieux leurs actifs numeriques.",
+            "Face aux risques de dépendance, les équipes techniques privilégient les architectures explicites, documentées et testées. Les couches de présentation, de services et de données sont séparées pour faciliter les audits et les évolutions. Cette démarche donne plus d'autonomie aux organisations et protège mieux leurs actifs numériques.",
             "Technologie",
         ),
     ]
@@ -136,9 +139,16 @@ def seed_editorial_content() -> None:
     for title, slug, summary, content, category_name in articles:
         db.execute(
             """
-            INSERT OR IGNORE INTO articles
+            INSERT INTO articles
                 (title, slug, summary, content, category_id, author_id, published, created_at, updated_at)
             VALUES (?, ?, ?, ?, ?, ?, 1, ?, ?)
+            ON CONFLICT(slug) DO UPDATE SET
+                title = excluded.title,
+                summary = excluded.summary,
+                content = excluded.content,
+                category_id = excluded.category_id,
+                published = excluded.published,
+                updated_at = excluded.updated_at
             """,
             (title, slug, summary, content, category_ids[category_name], admin_id, now, now),
         )
@@ -152,9 +162,9 @@ def init_app(app) -> None:
     @app.cli.command("init-db")
     def init_db_command() -> None:
         init_db()
-        print("Base de donnees initialisee.")
+        print("Base de données initialisée.")
 
     @app.cli.command("seed-content")
     def seed_content_command() -> None:
         seed_editorial_content()
-        print("Articles editoriaux ajoutes.")
+        print("Articles éditoriaux ajoutés.")

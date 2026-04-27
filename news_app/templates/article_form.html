@@ -5,8 +5,8 @@
     <h1>{{ "Modifier l'article" if article else "Nouvel article" }}</h1>
     {% if not categories %}
         <div class="empty-state">
-            Creez d'abord une categorie avant d'ajouter un article.
-            <a href="{{ url_for('web.manage_categories') }}">Aller aux categories</a>
+            Créez d'abord une catégorie avant d'ajouter un article.
+            <a href="{{ url_for('web.manage_categories') }}">Aller aux catégories</a>
         </div>
     {% endif %}
     <form method="post" enctype="multipart/form-data">
@@ -17,7 +17,7 @@
                     <input name="title" required value="{{ article.title if article else '' }}">
                 </label>
                 <label>
-                    Resume
+                    Résumé
                     <textarea name="summary" required rows="3">{{ article.summary if article else '' }}</textarea>
                 </label>
                 <label>
@@ -25,7 +25,7 @@
                     <textarea name="content" required rows="10">{{ article.content if article else '' }}</textarea>
                 </label>
                 <label>
-                    Categorie
+                    Catégorie
                     <select name="category_id" required {% if not categories %}disabled{% endif %}>
                         {% for category in categories %}
                             <option value="{{ category.id }}" {% if article and article.category_id == category.id %}selected{% endif %}>
@@ -36,7 +36,7 @@
                 </label>
                 <label class="check">
                     <input type="checkbox" name="published" {% if not article or article.published %}checked{% endif %}>
-                    Publie
+                    Publié
                 </label>
                 <button class="button primary" type="submit" {% if not categories %}disabled{% endif %}>Enregistrer</button>
             </div>
@@ -55,7 +55,7 @@
                         Retirer l'image actuelle
                     </label>
                 {% endif %}
-                <p class="hint">Formats acceptes : PNG, JPG, JPEG, WEBP ou GIF. Taille maximale : 4 Mo.</p>
+                <p class="hint">Formats acceptés : PNG, JPG, JPEG, WEBP ou GIF. Taille maximale : 4 Mo.</p>
             </aside>
         </div>
     </form>

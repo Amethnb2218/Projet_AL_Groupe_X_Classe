@@ -23,15 +23,15 @@
             </div>
         </article>
     {% else %}
-        <p class="empty-state">Aucun article dans cette categorie.</p>
+        <p class="empty-state">Aucun article dans cette catégorie.</p>
     {% endfor %}
 </div>
 
 <div class="pager">
     {% if has_previous %}
-        <a class="button" href="{{ url_for('web.category_detail', slug=category.slug, page=page - 1) }}">Precedent</a>
+        <a class="button" href="{{ url_for('web.category_detail', slug=category.slug, page=page - 1) }}">Précédent</a>
     {% else %}
-        <span class="button disabled">Precedent</span>
+        <span class="button disabled">Précédent</span>
     {% endif %}
     <span>Page {{ page }}</span>
     {% if has_next %}

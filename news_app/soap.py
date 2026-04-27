@@ -80,12 +80,12 @@ def soap_endpoint():
     try:
         root = fromstring(request.data)
     except ParseError:
-        return failure("soap", "Requete XML invalide.", 400)
+        return failure("soap", "Requête XML invalide.", 400)
 
     body = find_body(root)
     operation_node = first_child(body)
     if operation_node is None:
-        return failure("soap", "Operation SOAP manquante.", 400)
+        return failure("soap", "Opération SOAP manquante.", 400)
 
     operation = local_name(operation_node.tag)
     handlers = {
@@ -97,7 +97,7 @@ def soap_endpoint():
     }
     handler = handlers.get(operation)
     if handler is None:
-        return failure(operation, f"Operation inconnue : {operation}", 400)
+        return failure(operation, f"Opération inconnue : {operation}", 400)
     return handler(operation_node)
 
 
@@ -190,14 +190,14 @@ def handle_delete_user(node: Element) -> Response:
 
 SOAP_HELP = """Service SOAP disponible sur /soap
 
-Operations:
+Opérations :
 - authenticateUser(login, password)
 - listUsers(token)
 - addUser(token, login, full_name, role, password)
 - updateUser(token, id, login, full_name, role, password optionnel)
 - deleteUser(token, id)
 
-Ajoutez ?wsdl a l'URL pour obtenir une description simplifiee.
+Ajoutez ?wsdl à l'URL pour obtenir une description simplifiée.
 """
 
 WSDL = """<?xml version="1.0" encoding="UTF-8"?>
@@ -207,7 +207,7 @@ WSDL = """<?xml version="1.0" encoding="UTF-8"?>
   xmlns:soap="http://schemas.xmlsoap.org/wsdl/soap/"
   xmlns:tns="urn:news-user-service">
   <service name="NewsUserService">
-    <documentation>Service SOAP de gestion des utilisateurs protege par jeton.</documentation>
+    <documentation>Service SOAP de gestion des utilisateurs protégé par jeton.</documentation>
     <port name="NewsUserPort" binding="tns:NewsUserBinding">
       <soap:address location="/soap"/>
     </port>

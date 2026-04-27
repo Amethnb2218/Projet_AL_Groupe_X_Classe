@@ -38,7 +38,7 @@ def save_article_image(file_storage) -> str | None:
         return None
     original_name = secure_filename(file_storage.filename)
     if not allowed_image(original_name):
-        raise ValueError("Format d'image non autorise. Utilisez PNG, JPG, JPEG, WEBP ou GIF.")
+        raise ValueError("Format d'image non autorisé. Utilisez PNG, JPG, JPEG, WEBP ou GIF.")
     extension = original_name.rsplit(".", 1)[1].lower()
     filename = f"{uuid.uuid4().hex}.{extension}"
     destination = Path(current_app.config["UPLOAD_FOLDER"]) / filename
@@ -170,7 +170,7 @@ def login():
         else:
             session.clear()
             session["user_id"] = user["id"]
-            flash("Connexion reussie.", "success")
+            flash("Connexion réussie.", "success")
             return redirect(request.args.get("next") or url_for("web.home"))
     return render_template("login.html")
 
@@ -178,7 +178,7 @@ def login():
 @bp.route("/logout", methods=("POST",))
 def logout():
     session.clear()
-    flash("Vous etes deconnecte.", "success")
+    flash("Vous êtes déconnecté.", "success")
     return redirect(url_for("web.home"))
 
 
@@ -205,7 +205,7 @@ def new_article():
             )
             if saved_image:
                 services.set_article_image(article["id"], saved_image)
-            flash("Article ajoute.", "success")
+            flash("Article ajouté.", "success")
             return redirect(url_for("web.edit_article", article_id=article["id"]))
         except (sqlite3.IntegrityError, ValueError) as exc:
             delete_article_image(saved_image)
@@ -237,7 +237,7 @@ def edit_article(article_id: int):
             elif request.form.get("remove_image") == "on":
                 delete_article_image(article["image_filename"])
                 services.set_article_image(article_id, None)
-            flash("Article modifie.", "success")
+            flash("Article modifié.", "success")
             return redirect(url_for("web.manage_articles"))
         except (sqlite3.IntegrityError, ValueError) as exc:
             delete_article_image(saved_image)
@@ -252,7 +252,7 @@ def delete_article(article_id: int):
     if article:
         delete_article_image(article["image_filename"])
     services.delete_article(article_id)
-    flash("Article supprime.", "success")
+    flash("Article supprimé.", "success")
     return redirect(url_for("web.manage_articles"))
 
 
@@ -262,9 +262,9 @@ def manage_categories():
     if request.method == "POST":
         try:
             services.create_category(request.form["name"], request.form.get("description", ""))
-            flash("Categorie ajoutee.", "success")
+            flash("Catégorie ajoutée.", "success")
         except sqlite3.IntegrityError as exc:
-            flash(f"Impossible d'ajouter la categorie : {exc}", "error")
+            flash(f"Impossible d'ajouter la catégorie : {exc}", "error")
         return redirect(url_for("web.manage_categories"))
     return render_template("manage_categories.html", categories=services.list_categories())
 
@@ -278,10 +278,10 @@ def edit_category(category_id: int):
     if request.method == "POST":
         try:
             services.update_category(category_id, request.form["name"], request.form.get("description", ""))
-            flash("Categorie modifiee.", "success")
+            flash("Catégorie modifiée.", "success")
             return redirect(url_for("web.manage_categories"))
         except sqlite3.IntegrityError as exc:
-            flash(f"Impossible de modifier la categorie : {exc}", "error")
+            flash(f"Impossible de modifier la catégorie : {exc}", "error")
     return render_template("category_form.html", category=category)
 
 
@@ -290,9 +290,9 @@ def edit_category(category_id: int):
 def delete_category(category_id: int):
     try:
         services.delete_category(category_id)
-        flash("Categorie supprimee.", "success")
+        flash("Catégorie supprimée.", "success")
     except sqlite3.IntegrityError:
-        flash("Cette categorie contient encore des articles.", "error")
+        flash("Cette catégorie contient encore des articles.", "error")
     return redirect(url_for("web.manage_categories"))
 
 
@@ -307,7 +307,7 @@ def manage_users():
                 request.form["role"],
                 request.form["password"],
             )
-            flash("Utilisateur ajoute.", "success")
+            flash("Utilisateur ajouté.", "success")
         except (sqlite3.IntegrityError, ValueError) as exc:
             flash(f"Impossible d'ajouter l'utilisateur : {exc}", "error")
         return redirect(url_for("web.manage_users"))
@@ -332,7 +332,7 @@ def edit_user(user_id: int):
                     request.form["role"],
                     request.form.get("password") or None,
                 )
-                flash("Utilisateur modifie.", "success")
+                flash("Utilisateur modifié.", "success")
                 return redirect(url_for("web.manage_users"))
             except (sqlite3.IntegrityError, ValueError) as exc:
                 flash(f"Impossible de modifier l'utilisateur : {exc}", "error")
@@ -351,9 +351,9 @@ def delete_user(user_id: int):
         else:
             try:
                 services.delete_user(user_id)
-                flash("Utilisateur supprime.", "success")
+                flash("Utilisateur supprimé.", "success")
             except sqlite3.IntegrityError:
-                flash("Cet utilisateur est lie a des articles ou jetons.", "error")
+                flash("Cet utilisateur est lié à des articles ou jetons.", "error")
     return redirect(url_for("web.manage_users"))
 
 
@@ -363,7 +363,7 @@ def manage_tokens():
     created_token = None
     if request.method == "POST":
         created_token = services.create_token(request.form.get("label", ""), g.user["id"])
-        flash("Jeton cree. Copiez-le maintenant, il donne acces au service SOAP.", "success")
+        flash("Jeton créé. Copiez-le maintenant, il donne accès au service SOAP.", "success")
     return render_template(
         "manage_tokens.html",
         tokens=services.list_active_tokens(),
@@ -375,5 +375,5 @@ def manage_tokens():
 @role_required("admin")
 def delete_token(token_id: int):
     services.revoke_token(token_id)
-    flash("Jeton supprime.", "success")
+    flash("Jeton supprimé.", "success")
     return redirect(url_for("web.manage_tokens"))

@@ -1,8 +1,8 @@
-# Projet d'architecture logicielle - site d'actualite
+# Projet d'architecture logicielle - site d'actualité
 
-Ce depot realise le cahier des charges du PDF : site web d'actualite, profils visiteur/editeur/administrateur, services REST, service SOAP protege par jeton et client Python de gestion des utilisateurs.
+Ce dépôt réalise le cahier des charges du PDF : site web d'actualité, profils visiteur/éditeur/administrateur, services REST, service SOAP protégé par jeton et client Python de gestion des utilisateurs.
 
-Le projet ne precharge pas de fausses actualites, categories, editeurs ou jetons. Apres initialisation, seul le compte administrateur initial existe afin de pouvoir creer les donnees depuis l'interface, comme dans un vrai back-office.
+Le projet ne précharge pas de fausses actualités, catégories, éditeurs ou jetons. Après initialisation, seul le compte administrateur initial existe afin de pouvoir créer les données depuis l'interface, comme dans un vrai back-office.
 
 ## Installation
 
@@ -12,7 +12,7 @@ flask --app app init-db
 flask --app app run
 ```
 
-Commandes equivalentes avec npm :
+Commandes équivalentes avec npm :
 
 ```powershell
 npm run setup
@@ -27,35 +27,35 @@ Compte initial :
 
 ## Ajouter des articles
 
-L'initialisation reste volontairement minimale. Pour remplir la base locale avec un lot d'articles editoriaux, lancez :
+L'initialisation reste volontairement minimale. Pour remplir la base locale avec un lot d'articles éditoriaux, lancez :
 
 ```powershell
 flask --app app seed-content
 ```
 
-Cette commande cree des categories et huit articles publies. Elle est idempotente : la relancer ne duplique pas les articles deja crees.
+Cette commande crée des catégories et huit articles publiés. Elle est idempotente : la relancer ne duplique pas les articles déjà créés.
 
 ## Parcours attendu
 
 1. Connectez-vous avec le compte administrateur initial.
-2. Creez les editeurs dans `Utilisateurs`.
-3. Creez les categories dans `Gestion categories`.
-4. Creez les articles dans `Articles`, avec possibilite d'ajouter, remplacer ou retirer une image.
-5. Generez les jetons SOAP dans `Jetons` avant d'utiliser les operations SOAP protegees.
+2. Créez les éditeurs dans `Utilisateurs`.
+3. Créez les catégories dans `Gestion catégories`.
+4. Créez les articles dans `Articles`, avec possibilité d'ajouter, remplacer ou retirer une image.
+5. Générez les jetons SOAP dans `Jetons` avant d'utiliser les opérations SOAP protégées.
 
-## Fonctionnalites web
+## Fonctionnalités web
 
-- Accueil avec les derniers articles et pagination `Precedent` / `Suivant`.
-- Consultation du detail d'un article en cliquant sur son titre.
-- Consultation des articles par categorie.
-- Gestion des articles et categories par les editeurs.
+- Accueil avec les derniers articles et pagination `Précédent` / `Suivant`.
+- Consultation du détail d'un article en cliquant sur son titre.
+- Consultation des articles par catégorie.
+- Gestion des articles et catégories par les éditeurs.
 - Gestion des utilisateurs par les administrateurs.
-- Generation et suppression des jetons SOAP par les administrateurs.
+- Génération et suppression des jetons SOAP par les administrateurs.
 - Upload, changement et suppression d'image pour chaque article.
 
 ## Services REST
 
-Les endpoints retournent du JSON par defaut et du XML avec `?format=xml`.
+Les endpoints retournent du JSON par défaut et du XML avec `?format=xml`.
 
 - `GET /api/articles`
 - `GET /api/articles/grouped`
@@ -71,7 +71,7 @@ curl "http://127.0.0.1:5000/api/articles?format=xml"
 
 Endpoint : `POST /soap`
 
-Operations :
+Opérations :
 
 - `authenticateUser(login, password)`
 - `listUsers(token)`
@@ -79,15 +79,15 @@ Operations :
 - `updateUser(token, id, login, full_name, role, password optionnel)`
 - `deleteUser(token, id)`
 
-Une description simplifiee est disponible sur `GET /soap?wsdl`.
+Une description simplifiée est disponible sur `GET /soap?wsdl`.
 
-Exemple de requete :
+Exemple de requête :
 
 ```xml
 <soap:Envelope xmlns:soap="http://schemas.xmlsoap.org/soap/envelope/">
   <soap:Body>
     <listUsers>
-      <token>JETON_GENERE_DANS_L_ADMINISTRATION</token>
+      <token>JETON_GÉNÉRÉ_DANS_L_ADMINISTRATION</token>
     </listUsers>
   </soap:Body>
 </soap:Envelope>
@@ -101,7 +101,7 @@ Lancez le serveur Flask, puis :
 python client.py
 ```
 
-Le client demande le login/mot de passe, verifie que l'utilisateur est administrateur via SOAP, puis demande un jeton SOAP genere dans l'administration pour lister, ajouter, modifier ou supprimer les utilisateurs.
+Le client demande le login/mot de passe, vérifie que l'utilisateur est administrateur via SOAP, puis demande un jeton SOAP généré dans l'administration pour lister, ajouter, modifier ou supprimer les utilisateurs.
 
 ## Tests
 
