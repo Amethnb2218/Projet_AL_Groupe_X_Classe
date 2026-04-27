@@ -347,10 +347,17 @@ a:hover {
 .article-hero-image,
 .category-visual {
     background-color: #d8dee7;
-    background-position: center;
-    background-size: cover;
     display: block;
     position: relative;
+}
+
+.hero-media img,
+.article-media img,
+.article-hero-image img {
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
 }
 
 .hero-media span,
@@ -489,42 +496,6 @@ a:hover {
     margin: 0;
 }
 
-.media-technologie {
-    background-image:
-        linear-gradient(180deg, rgba(16, 20, 31, 0.04), rgba(16, 20, 31, 0.36)),
-        url("https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=1200&q=80");
-}
-
-.media-economie {
-    background-image:
-        linear-gradient(180deg, rgba(16, 20, 31, 0.04), rgba(16, 20, 31, 0.36)),
-        url("https://images.unsplash.com/photo-1520607162513-77705c0f0d4a?auto=format&fit=crop&w=1200&q=80");
-}
-
-.media-culture {
-    background-image:
-        linear-gradient(180deg, rgba(16, 20, 31, 0.04), rgba(16, 20, 31, 0.36)),
-        url("https://images.unsplash.com/photo-1514525253161-7a46d19cd819?auto=format&fit=crop&w=1200&q=80");
-}
-
-.media-international {
-    background-image:
-        linear-gradient(180deg, rgba(16, 20, 31, 0.04), rgba(16, 20, 31, 0.36)),
-        url("https://images.unsplash.com/photo-1521295121783-8a321d551ad2?auto=format&fit=crop&w=1200&q=80");
-}
-
-.media-sciences {
-    background-image:
-        linear-gradient(180deg, rgba(16, 20, 31, 0.04), rgba(16, 20, 31, 0.36)),
-        url("https://images.unsplash.com/photo-1532187643603-ba119ca4109e?auto=format&fit=crop&w=1200&q=80");
-}
-
-.media-default {
-    background-image:
-        linear-gradient(135deg, rgba(0, 95, 91, 0.88), rgba(185, 130, 34, 0.78)),
-        url("https://images.unsplash.com/photo-1504711434969-e33886168f5c?auto=format&fit=crop&w=1200&q=80");
-}
-
 .article-detail {
     background: var(--surface);
     border: 1px solid var(--line);
@@ -593,6 +564,11 @@ a:hover {
 }
 
 .category-visual {
+    background:
+        linear-gradient(180deg, rgba(16, 20, 31, 0.02), rgba(16, 20, 31, 0.42)),
+        url("/static/images/editorial-fallback.png");
+    background-position: center;
+    background-size: cover;
     min-height: 150px;
 }
 
@@ -693,6 +669,39 @@ table {
 
 .form-panel.narrow {
     max-width: 460px;
+}
+
+.editor-grid {
+    display: grid;
+    gap: 22px;
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+}
+
+.image-editor {
+    align-self: start;
+    background: #f8fafc;
+    border: 1px solid var(--line-cool);
+    border-radius: 8px;
+    padding: 16px;
+}
+
+.image-editor h2 {
+    font-family: Georgia, "Times New Roman", serif;
+    margin: 0 0 12px;
+}
+
+.image-preview {
+    background: #d8dee7;
+    border-radius: 8px;
+    margin-bottom: 14px;
+    overflow: hidden;
+}
+
+.image-preview img {
+    aspect-ratio: 16 / 10;
+    display: block;
+    object-fit: cover;
+    width: 100%;
 }
 
 form {
@@ -890,7 +899,7 @@ code {
 .auth-copy {
     background:
         linear-gradient(180deg, rgba(16, 20, 31, 0.18), rgba(16, 20, 31, 0.7)),
-        url("https://images.unsplash.com/photo-1495020689067-958852a7765e?auto=format&fit=crop&w=1200&q=80");
+        url("/static/images/editorial-fallback.png");
     background-position: center;
     background-size: cover;
     border-radius: 8px;
@@ -973,7 +982,8 @@ code {
     .split,
     .sidebar,
     .metric-grid,
-    .auth-shell {
+    .auth-shell,
+    .editor-grid {
         grid-template-columns: 1fr;
     }
 

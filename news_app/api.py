@@ -28,6 +28,7 @@ def append_article(parent: Element, article) -> None:
     item = SubElement(parent, "article", id=str(data["id"]))
     for key in ("title", "slug", "summary", "content", "created_at", "updated_at"):
         SubElement(item, key).text = str(data[key])
+    SubElement(item, "image_filename").text = data["image_filename"] or ""
     SubElement(item, "published").text = "true" if data["published"] else "false"
     category = SubElement(item, "category", id=str(data["category"]["id"]))
     SubElement(category, "name").text = data["category"]["name"]
@@ -75,6 +76,7 @@ def grouped_articles():
                 SubElement(item, "title").text = article["title"]
                 SubElement(item, "slug").text = article["slug"]
                 SubElement(item, "summary").text = article["summary"]
+                SubElement(item, "image_filename").text = article["image_filename"] or ""
         return xml_response(root)
 
     return jsonify({"categories": categories})

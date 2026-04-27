@@ -228,19 +228,22 @@ def get_article_by_slug(slug: str):
 
 
 def create_article(title: str, summary: str, content: str, category_id: int, author_id: int, published: bool):
+    if get_category(category_id) is None:
+        raise ValueError("Veuillez creer une categorie avant d'ajouter un article.")
     db = get_db()
     now = utc_now()
     cursor = db.execute(
         """
         INSERT INTO articles
-            (title, slug, summary, content, category_id, author_id, published, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (title, slug, summary, content, image_filename, category_id, author_id, published, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             title.strip(),
             unique_slug("articles", title),
             summary.strip(),
             content.strip(),
+            None,
             category_id,
             author_id,
             1 if published else 0,
@@ -260,6 +263,8 @@ def update_article(
     category_id: int,
     published: bool,
 ):
+    if get_category(category_id) is None:
+        raise ValueError("Veuillez choisir une categorie existante.")
     db = get_db()
     db.execute(
         """
@@ -282,6 +287,16 @@ def update_article(
     return get_article(article_id)
 
 
+def set_article_image(article_id: int, image_filename: str | None):
+    db = get_db()
+    db.execute(
+        "UPDATE articles SET image_filename = ?, updated_at = ? WHERE id = ?",
+        (image_filename, utc_now(), article_id),
+    )
+    db.commit()
+    return get_article(article_id)
+
+
 def delete_article(article_id: int) -> None:
     db = get_db()
     db.execute("DELETE FROM articles WHERE id = ?", (article_id,))
@@ -295,6 +310,7 @@ def article_to_dict(article) -> dict:
         "slug": article["slug"],
         "summary": article["summary"],
         "content": article["content"],
+        "image_filename": article["image_filename"],
         "published": bool(article["published"]),
         "created_at": article["created_at"],
         "updated_at": article["updated_at"],

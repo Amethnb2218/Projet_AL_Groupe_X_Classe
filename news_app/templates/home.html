@@ -10,7 +10,8 @@
 {% if articles %}
     {% set featured = articles[0] %}
     <section class="hero-story">
-        <a class="hero-media media-{{ featured.category_slug or 'default' }}" href="{{ url_for('web.article_detail', slug=featured.slug) }}" aria-label="{{ featured.title }}">
+        <a class="hero-media" href="{{ url_for('web.article_detail', slug=featured.slug) }}" aria-label="{{ featured.title }}">
+            <img src="{{ article_image_url(featured) }}" alt="">
             <span>{{ featured.category_name }}</span>
         </a>
         <div class="hero-copy">
@@ -38,7 +39,8 @@
 <div class="article-list">
     {% for article in articles[1:] %}
         <article class="article-card">
-            <a class="article-media media-{{ article.category_slug or 'default' }}" href="{{ url_for('web.article_detail', slug=article.slug) }}" aria-label="{{ article.title }}">
+            <a class="article-media" href="{{ url_for('web.article_detail', slug=article.slug) }}" aria-label="{{ article.title }}">
+                <img src="{{ article_image_url(article) }}" alt="">
                 <span>{{ article.category_name }}</span>
             </a>
             <div class="article-copy">

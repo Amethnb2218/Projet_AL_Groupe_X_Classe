@@ -1,25 +1,67 @@
 from __future__ import annotations
 
 import sqlite3
+import uuid
 from functools import wraps
+from pathlib import Path
 
 from flask import (
     Blueprint,
     abort,
+    current_app,
     flash,
     g,
     redirect,
     render_template,
     request,
+    send_from_directory,
     session,
     url_for,
-    current_app,
 )
+from werkzeug.utils import secure_filename
 
 from .database import get_db
 from . import services
 
 bp = Blueprint("web", __name__)
+
+
+def allowed_image(filename: str) -> bool:
+    if "." not in filename:
+        return False
+    extension = filename.rsplit(".", 1)[1].lower()
+    return extension in current_app.config["ALLOWED_IMAGE_EXTENSIONS"]
+
+
+def save_article_image(file_storage) -> str | None:
+    if file_storage is None or not file_storage.filename:
+        return None
+    original_name = secure_filename(file_storage.filename)
+    if not allowed_image(original_name):
+        raise ValueError("Format d'image non autorise. Utilisez PNG, JPG, JPEG, WEBP ou GIF.")
+    extension = original_name.rsplit(".", 1)[1].lower()
+    filename = f"{uuid.uuid4().hex}.{extension}"
+    destination = Path(current_app.config["UPLOAD_FOLDER"]) / filename
+    file_storage.save(destination)
+    return filename
+
+
+def delete_article_image(filename: str | None) -> None:
+    if not filename:
+        return
+    upload_dir = Path(current_app.config["UPLOAD_FOLDER"]).resolve()
+    image_path = (upload_dir / filename).resolve()
+    if image_path.parent == upload_dir and image_path.exists():
+        image_path.unlink()
+
+
+def article_image_url(article) -> str:
+    filename = None
+    if article is not None and "image_filename" in article.keys():
+        filename = article["image_filename"]
+    if filename:
+        return url_for("web.uploaded_file", filename=filename)
+    return url_for("static", filename="images/editorial-fallback.png")
 
 
 @bp.before_app_request
@@ -58,9 +100,14 @@ def role_required(*roles: str):
 @bp.context_processor
 def inject_categories():
     try:
-        return {"nav_categories": services.list_categories()}
+        return {"nav_categories": services.list_categories(), "article_image_url": article_image_url}
     except sqlite3.OperationalError:
-        return {"nav_categories": []}
+        return {"nav_categories": [], "article_image_url": article_image_url}
+
+
+@bp.route("/uploads/<path:filename>")
+def uploaded_file(filename: str):
+    return send_from_directory(current_app.config["UPLOAD_FOLDER"], filename)
 
 
 @bp.route("/")
@@ -145,7 +192,9 @@ def manage_articles():
 @role_required("editor", "admin")
 def new_article():
     if request.method == "POST":
+        saved_image = None
         try:
+            saved_image = save_article_image(request.files.get("image"))
             article = services.create_article(
                 request.form["title"],
                 request.form["summary"],
@@ -154,9 +203,12 @@ def new_article():
                 g.user["id"],
                 request.form.get("published") == "on",
             )
+            if saved_image:
+                services.set_article_image(article["id"], saved_image)
             flash("Article ajoute.", "success")
             return redirect(url_for("web.edit_article", article_id=article["id"]))
-        except sqlite3.IntegrityError as exc:
+        except (sqlite3.IntegrityError, ValueError) as exc:
+            delete_article_image(saved_image)
             flash(f"Impossible d'ajouter l'article : {exc}", "error")
     return render_template("article_form.html", article=None, categories=services.list_categories())
 
@@ -168,7 +220,9 @@ def edit_article(article_id: int):
     if article is None:
         abort(404)
     if request.method == "POST":
+        saved_image = None
         try:
+            saved_image = save_article_image(request.files.get("image"))
             services.update_article(
                 article_id,
                 request.form["title"],
@@ -177,9 +231,16 @@ def edit_article(article_id: int):
                 request.form.get("category_id", type=int),
                 request.form.get("published") == "on",
             )
+            if saved_image:
+                delete_article_image(article["image_filename"])
+                services.set_article_image(article_id, saved_image)
+            elif request.form.get("remove_image") == "on":
+                delete_article_image(article["image_filename"])
+                services.set_article_image(article_id, None)
             flash("Article modifie.", "success")
             return redirect(url_for("web.manage_articles"))
-        except sqlite3.IntegrityError as exc:
+        except (sqlite3.IntegrityError, ValueError) as exc:
+            delete_article_image(saved_image)
             flash(f"Impossible de modifier l'article : {exc}", "error")
     return render_template("article_form.html", article=article, categories=services.list_categories())
 
@@ -187,6 +248,9 @@ def edit_article(article_id: int):
 @bp.route("/editor/articles/<int:article_id>/delete", methods=("POST",))
 @role_required("editor", "admin")
 def delete_article(article_id: int):
+    article = services.get_article(article_id)
+    if article:
+        delete_article_image(article["image_filename"])
     services.delete_article(article_id)
     flash("Article supprime.", "success")
     return redirect(url_for("web.manage_articles"))

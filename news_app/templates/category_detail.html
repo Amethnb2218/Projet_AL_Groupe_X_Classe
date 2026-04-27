@@ -12,7 +12,8 @@
 <div class="article-list">
     {% for article in articles %}
         <article class="article-card">
-            <a class="article-media media-{{ article.category_slug or 'default' }}" href="{{ url_for('web.article_detail', slug=article.slug) }}" aria-label="{{ article.title }}">
+            <a class="article-media" href="{{ url_for('web.article_detail', slug=article.slug) }}" aria-label="{{ article.title }}">
+                <img src="{{ article_image_url(article) }}" alt="">
                 <span>{{ article.category_name }}</span>
             </a>
             <div class="article-copy">

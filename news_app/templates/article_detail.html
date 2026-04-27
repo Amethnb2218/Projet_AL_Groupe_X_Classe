@@ -2,7 +2,8 @@
 {% block title %}{{ article.title }} - AL News{% endblock %}
 {% block content %}
 <article class="article-detail">
-    <div class="article-hero-image media-{{ article.category_slug or 'default' }}">
+    <div class="article-hero-image">
+        <img src="{{ article_image_url(article) }}" alt="">
         <span>{{ article.category_name }}</span>
     </div>
     <div class="article-detail-copy">

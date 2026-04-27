@@ -3,34 +3,61 @@
 {% block content %}
 <div class="form-panel">
     <h1>{{ "Modifier l'article" if article else "Nouvel article" }}</h1>
-    <form method="post">
-        <label>
-            Titre
-            <input name="title" required value="{{ article.title if article else '' }}">
-        </label>
-        <label>
-            Resume
-            <textarea name="summary" required rows="3">{{ article.summary if article else '' }}</textarea>
-        </label>
-        <label>
-            Contenu
-            <textarea name="content" required rows="10">{{ article.content if article else '' }}</textarea>
-        </label>
-        <label>
-            Categorie
-            <select name="category_id" required>
-                {% for category in categories %}
-                    <option value="{{ category.id }}" {% if article and article.category_id == category.id %}selected{% endif %}>
-                        {{ category.name }}
-                    </option>
-                {% endfor %}
-            </select>
-        </label>
-        <label class="check">
-            <input type="checkbox" name="published" {% if not article or article.published %}checked{% endif %}>
-            Publie
-        </label>
-        <button class="button primary" type="submit">Enregistrer</button>
+    {% if not categories %}
+        <div class="empty-state">
+            Creez d'abord une categorie avant d'ajouter un article.
+            <a href="{{ url_for('web.manage_categories') }}">Aller aux categories</a>
+        </div>
+    {% endif %}
+    <form method="post" enctype="multipart/form-data">
+        <div class="editor-grid">
+            <div>
+                <label>
+                    Titre
+                    <input name="title" required value="{{ article.title if article else '' }}">
+                </label>
+                <label>
+                    Resume
+                    <textarea name="summary" required rows="3">{{ article.summary if article else '' }}</textarea>
+                </label>
+                <label>
+                    Contenu
+                    <textarea name="content" required rows="10">{{ article.content if article else '' }}</textarea>
+                </label>
+                <label>
+                    Categorie
+                    <select name="category_id" required {% if not categories %}disabled{% endif %}>
+                        {% for category in categories %}
+                            <option value="{{ category.id }}" {% if article and article.category_id == category.id %}selected{% endif %}>
+                                {{ category.name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </label>
+                <label class="check">
+                    <input type="checkbox" name="published" {% if not article or article.published %}checked{% endif %}>
+                    Publie
+                </label>
+                <button class="button primary" type="submit" {% if not categories %}disabled{% endif %}>Enregistrer</button>
+            </div>
+            <aside class="image-editor">
+                <h2>Image de l'article</h2>
+                <div class="image-preview">
+                    <img src="{{ article_image_url(article) if article else url_for('static', filename='images/editorial-fallback.png') }}" alt="">
+                </div>
+                <label>
+                    Ajouter ou remplacer l'image
+                    <input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif">
+                </label>
+                {% if article and article.image_filename %}
+                    <label class="check">
+                        <input type="checkbox" name="remove_image">
+                        Retirer l'image actuelle
+                    </label>
+                {% endif %}
+                <p class="hint">Formats acceptes : PNG, JPG, JPEG, WEBP ou GIF. Taille maximale : 4 Mo.</p>
+            </aside>
+        </div>
     </form>
 </div>
 {% endblock %}
