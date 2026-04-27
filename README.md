@@ -25,6 +25,16 @@ Compte initial :
 
 - Administrateur : `admin` / `admin123`
 
+## Ajouter des articles
+
+L'initialisation reste volontairement minimale. Pour remplir la base locale avec un lot d'articles editoriaux, lancez :
+
+```powershell
+flask --app app seed-content
+```
+
+Cette commande cree des categories et huit articles publies. Elle est idempotente : la relancer ne duplique pas les articles deja crees.
+
 ## Parcours attendu
 
 1. Connectez-vous avec le compte administrateur initial.

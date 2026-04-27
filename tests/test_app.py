@@ -88,6 +88,23 @@ def test_frontend_uses_african_fallback_image_and_wraps_long_titles(client):
     assert image.mimetype == "image/png"
 
 
+def test_seed_content_command_adds_editorial_articles(app, client):
+    runner = app.test_cli_runner()
+    result = runner.invoke(args=["seed-content"])
+    assert result.exit_code == 0
+
+    response = client.get("/api/articles")
+    assert response.status_code == 200
+    assert len(response.json["articles"]) == 8
+    assert any(
+        article["slug"] == "cybersouverainete-equipes-techniques-reprennent-main"
+        for article in response.json["articles"]
+    )
+
+    categories = client.get("/api/articles/grouped")
+    assert len(categories.json["categories"]) == 5
+
+
 def test_home_lists_created_articles_and_pagination(client, sample_content):
     response = client.get("/")
     assert response.status_code == 200
