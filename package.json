@@ -1,0 +1,13 @@
+{
+  "name": "architecturelogicielle-news-app",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Projet d'architecture logicielle : site d'actualite Flask, REST, SOAP et client Python.",
+  "scripts": {
+    "setup": "python -m pip install -r requirements.txt && python -m flask --app app init-db",
+    "dev": "python -m flask --app app run --debug",
+    "start": "python -m flask --app app run",
+    "test": "pytest -q",
+    "client": "python client.py"
+  }
+}
