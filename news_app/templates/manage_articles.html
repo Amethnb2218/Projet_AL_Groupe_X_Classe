@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block title %}Gestion articles - AL News{% endblock %}
+{% block content %}
+<div class="page-title">
+    <div>
+        <p class="eyebrow">Redaction</p>
+        <h1>Gestion des articles</h1>
+        <p>Liste, ajout, modification et suppression des articles.</p>
+    </div>
+    <a class="button primary" href="{{ url_for('web.new_article') }}">Ajouter</a>
+</div>
+
+<div class="metric-grid">
+    <div class="metric-card">
+        <span>Total</span>
+        <strong>{{ articles|length }}</strong>
+    </div>
+    <div class="metric-card">
+        <span>Publies</span>
+        <strong>{{ articles|selectattr("published")|list|length }}</strong>
+    </div>
+    <div class="metric-card">
+        <span>Workflow</span>
+        <strong>Editeur</strong>
+    </div>
+</div>
+
+<div class="table-wrap">
+    <table>
+        <thead>
+            <tr>
+                <th>Titre</th>
+                <th>Categorie</th>
+                <th>Statut</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for article in articles %}
+                <tr>
+                    <td><strong>{{ article.title }}</strong></td>
+                    <td>{{ article.category_name }}</td>
+                    <td><span class="badge {{ 'success' if article.published else 'muted' }}">{{ "Publie" if article.published else "Brouillon" }}</span></td>
+                    <td class="actions">
+                        <a class="button small" href="{{ url_for('web.edit_article', article_id=article.id) }}">Modifier</a>
+                        <form method="post" action="{{ url_for('web.delete_article', article_id=article.id) }}">
+                            <button class="button danger small" type="submit">Supprimer</button>
+                        </form>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</div>
+{% endblock %}

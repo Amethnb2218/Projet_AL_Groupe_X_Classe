@@ -1,0 +1,82 @@
+{% extends "base.html" %}
+{% block title %}Gestion utilisateurs - AL News{% endblock %}
+{% block content %}
+<div class="page-title">
+    <div>
+        <p class="eyebrow">Administration</p>
+        <h1>Gestion des utilisateurs</h1>
+        <p>Reserve aux administrateurs.</p>
+    </div>
+</div>
+
+<div class="metric-grid">
+    <div class="metric-card">
+        <span>Total</span>
+        <strong>{{ users|length }}</strong>
+    </div>
+    <div class="metric-card">
+        <span>Admins</span>
+        <strong>{{ users|selectattr("role", "equalto", "admin")|list|length }}</strong>
+    </div>
+    <div class="metric-card">
+        <span>Editeurs</span>
+        <strong>{{ users|selectattr("role", "equalto", "editor")|list|length }}</strong>
+    </div>
+</div>
+
+<div class="split">
+    <div class="form-panel">
+        <h2>Ajouter</h2>
+        <form method="post">
+            <label>
+                Login
+                <input name="login" required>
+            </label>
+            <label>
+                Nom complet
+                <input name="full_name" required>
+            </label>
+            <label>
+                Role
+                <select name="role">
+                    <option value="editor">Editeur</option>
+                    <option value="admin">Administrateur</option>
+                </select>
+            </label>
+            <label>
+                Mot de passe
+                <input type="password" name="password" required>
+            </label>
+            <button class="button primary" type="submit">Ajouter</button>
+        </form>
+    </div>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>Login</th>
+                    <th>Nom</th>
+                    <th>Role</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for user in users %}
+                    <tr>
+                        <td><strong>{{ user.login }}</strong></td>
+                        <td>{{ user.full_name }}</td>
+                        <td><span class="badge {{ 'admin' if user.role == 'admin' else 'success' }}">{{ user.role }}</span></td>
+                        <td class="actions">
+                            <a class="button small" href="{{ url_for('web.edit_user', user_id=user.id) }}">Modifier</a>
+                            <form method="post" action="{{ url_for('web.delete_user', user_id=user.id) }}">
+                                <button class="button danger small" type="submit">Supprimer</button>
+                            </form>
+                        </td>
+                    </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

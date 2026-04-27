@@ -1,0 +1,70 @@
+{% extends "base.html" %}
+{% block title %}Accueil - AL News{% endblock %}
+{% block content %}
+<section class="front-masthead">
+    <p class="eyebrow">Journal numerique</p>
+    <h1>L'information qui relie technologie, economie et culture.</h1>
+    <p>Analyses, reportages et dossiers publies par une redaction tournee vers les nouveaux usages.</p>
+</section>
+
+{% if articles %}
+    {% set featured = articles[0] %}
+    <section class="hero-story">
+        <a class="hero-media media-{{ featured.category_slug or 'default' }}" href="{{ url_for('web.article_detail', slug=featured.slug) }}" aria-label="{{ featured.title }}">
+            <span>{{ featured.category_name }}</span>
+        </a>
+        <div class="hero-copy">
+            <div class="kicker">A la une &middot; {{ featured.category_name }}</div>
+            <h1><a href="{{ url_for('web.article_detail', slug=featured.slug) }}">{{ featured.title }}</a></h1>
+            <p>{{ featured.summary }}</p>
+            <div class="story-meta">
+                <span>{{ featured.created_at|date_fr }}</span>
+                <span>Lecture 3 min</span>
+            </div>
+            <a class="text-link" href="{{ url_for('web.article_detail', slug=featured.slug) }}">Lire l'article</a>
+        </div>
+    </section>
+{% else %}
+    <div class="empty-state">Aucun article publie pour le moment.</div>
+{% endif %}
+
+<div class="section-heading">
+    <div>
+        <h2>Derniers articles</h2>
+        <p>Selection editoriale des publications les plus recentes.</p>
+    </div>
+</div>
+
+<div class="article-list">
+    {% for article in articles[1:] %}
+        <article class="article-card">
+            <a class="article-media media-{{ article.category_slug or 'default' }}" href="{{ url_for('web.article_detail', slug=article.slug) }}" aria-label="{{ article.title }}">
+                <span>{{ article.category_name }}</span>
+            </a>
+            <div class="article-copy">
+                <div class="meta">{{ article.category_name }} &middot; {{ article.created_at|date_fr }}</div>
+                <h3><a href="{{ url_for('web.article_detail', slug=article.slug) }}">{{ article.title }}</a></h3>
+                <p>{{ article.summary }}</p>
+            </div>
+        </article>
+    {% else %}
+        {% if articles %}
+            <p class="empty-state">Aucun autre article sur cette page.</p>
+        {% endif %}
+    {% endfor %}
+</div>
+
+<div class="pager">
+    {% if has_previous %}
+        <a class="button" href="{{ url_for('web.home', page=page - 1) }}">Precedent</a>
+    {% else %}
+        <span class="button disabled">Precedent</span>
+    {% endif %}
+    <span>Page {{ page }}</span>
+    {% if has_next %}
+        <a class="button" href="{{ url_for('web.home', page=page + 1) }}">Suivant</a>
+    {% else %}
+        <span class="button disabled">Suivant</span>
+    {% endif %}
+</div>
+{% endblock %}

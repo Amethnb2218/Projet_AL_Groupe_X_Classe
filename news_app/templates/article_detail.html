@@ -1,0 +1,15 @@
+{% extends "base.html" %}
+{% block title %}{{ article.title }} - AL News{% endblock %}
+{% block content %}
+<article class="article-detail">
+    <div class="article-hero-image media-{{ article.category_slug or 'default' }}">
+        <span>{{ article.category_name }}</span>
+    </div>
+    <div class="article-detail-copy">
+        <div class="meta">{{ article.category_name }} &middot; {{ article.author_name }} &middot; {{ article.created_at|date_fr }}</div>
+        <h1>{{ article.title }}</h1>
+        <p class="lead">{{ article.summary }}</p>
+        <div class="body-text">{{ article.content }}</div>
+    </div>
+</article>
+{% endblock %}

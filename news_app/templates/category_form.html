@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+{% block title %}Categorie - AL News{% endblock %}
+{% block content %}
+<div class="form-panel">
+    <h1>Modifier la categorie</h1>
+    <form method="post">
+        <label>
+            Nom
+            <input name="name" required value="{{ category.name }}">
+        </label>
+        <label>
+            Description
+            <textarea name="description" rows="5">{{ category.description }}</textarea>
+        </label>
+        <button class="button primary" type="submit">Enregistrer</button>
+    </form>
+</div>
+{% endblock %}

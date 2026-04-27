@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+{% block title %}Connexion - AL News{% endblock %}
+{% block content %}
+<div class="auth-shell">
+    <div class="auth-copy">
+        <p class="eyebrow">Espace redaction</p>
+        <h1>Connexion</h1>
+        <p>Acces reserve aux editeurs et aux administrateurs du site.</p>
+    </div>
+    <div class="form-panel narrow">
+        <form method="post">
+            <label>
+                Login
+                <input name="login" required autocomplete="username">
+            </label>
+            <label>
+                Mot de passe
+                <input type="password" name="password" required autocomplete="current-password">
+            </label>
+            <button class="button primary" type="submit">Se connecter</button>
+        </form>
+        <p class="hint">Comptes de demonstration : admin/admin123 et editor/editor123.</p>
+    </div>
+</div>
+{% endblock %}

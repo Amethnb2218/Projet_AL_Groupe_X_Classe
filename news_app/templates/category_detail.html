@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% block title %}{{ category.name }} - AL News{% endblock %}
+{% block content %}
+<div class="page-title">
+    <div>
+        <p class="eyebrow">Rubrique</p>
+        <h1>{{ category.name }}</h1>
+        <p>{{ category.description }}</p>
+    </div>
+</div>
+
+<div class="article-list">
+    {% for article in articles %}
+        <article class="article-card">
+            <a class="article-media media-{{ article.category_slug or 'default' }}" href="{{ url_for('web.article_detail', slug=article.slug) }}" aria-label="{{ article.title }}">
+                <span>{{ article.category_name }}</span>
+            </a>
+            <div class="article-copy">
+                <div class="meta">{{ article.created_at|date_fr }}</div>
+                <h3><a href="{{ url_for('web.article_detail', slug=article.slug) }}">{{ article.title }}</a></h3>
+                <p>{{ article.summary }}</p>
+            </div>
+        </article>
+    {% else %}
+        <p class="empty-state">Aucun article dans cette categorie.</p>
+    {% endfor %}
+</div>
+
+<div class="pager">
+    {% if has_previous %}
+        <a class="button" href="{{ url_for('web.category_detail', slug=category.slug, page=page - 1) }}">Precedent</a>
+    {% else %}
+        <span class="button disabled">Precedent</span>
+    {% endif %}
+    <span>Page {{ page }}</span>
+    {% if has_next %}
+        <a class="button" href="{{ url_for('web.category_detail', slug=category.slug, page=page + 1) }}">Suivant</a>
+    {% else %}
+        <span class="button disabled">Suivant</span>
+    {% endif %}
+</div>
+{% endblock %}

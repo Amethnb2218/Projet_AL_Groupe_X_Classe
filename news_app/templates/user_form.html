@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% block title %}Utilisateur - AL News{% endblock %}
+{% block content %}
+<div class="form-panel">
+    <h1>Modifier l'utilisateur</h1>
+    <form method="post">
+        <label>
+            Login
+            <input name="login" required value="{{ user.login }}">
+        </label>
+        <label>
+            Nom complet
+            <input name="full_name" required value="{{ user.full_name }}">
+        </label>
+        <label>
+            Role
+            <select name="role">
+                <option value="editor" {% if user.role == 'editor' %}selected{% endif %}>Editeur</option>
+                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrateur</option>
+            </select>
+        </label>
+        <label>
+            Nouveau mot de passe
+            <input type="password" name="password">
+        </label>
+        <button class="button primary" type="submit">Enregistrer</button>
+    </form>
+</div>
+{% endblock %}

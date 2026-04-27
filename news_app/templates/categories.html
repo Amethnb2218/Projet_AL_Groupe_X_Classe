@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% block title %}Categories - AL News{% endblock %}
+{% block content %}
+<div class="page-title">
+    <div>
+        <p class="eyebrow">Navigation editoriale</p>
+        <h1>Categories</h1>
+        <p>Consultez les articles par rubrique.</p>
+    </div>
+</div>
+
+<div class="category-grid">
+    {% for category in categories %}
+        <a class="category-item" href="{{ url_for('web.category_detail', slug=category.slug) }}">
+            <span class="category-visual media-{{ category.slug }}"></span>
+            <span class="category-copy">
+                <strong>{{ category.name }}</strong>
+                <span>{{ category.description }}</span>
+            </span>
+        </a>
+    {% endfor %}
+</div>
+{% endblock %}
