@@ -77,6 +77,17 @@ def test_initial_database_contains_only_required_admin(client):
     assert categories.json["categories"] == []
 
 
+def test_frontend_uses_african_fallback_image_and_wraps_long_titles(client):
+    response = client.get("/static/styles.css")
+    assert response.status_code == 200
+    assert b"african-journalist-fallback.png" in response.data
+    assert b"overflow-wrap: anywhere" in response.data
+
+    image = client.get("/static/images/african-journalist-fallback.png")
+    assert image.status_code == 200
+    assert image.mimetype == "image/png"
+
+
 def test_home_lists_created_articles_and_pagination(client, sample_content):
     response = client.get("/")
     assert response.status_code == 200

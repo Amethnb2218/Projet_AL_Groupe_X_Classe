@@ -315,6 +315,9 @@ a:hover {
     font-family: Georgia, "Times New Roman", serif;
     font-weight: 700;
     letter-spacing: 0;
+    max-width: 100%;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .front-masthead h1 {
@@ -337,7 +340,7 @@ a:hover {
     border-radius: 8px;
     box-shadow: var(--shadow);
     display: grid;
-    grid-template-columns: minmax(320px, 1.08fr) minmax(310px, 0.92fr);
+    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
     min-height: 430px;
     overflow: hidden;
 }
@@ -378,11 +381,12 @@ a:hover {
 .hero-copy {
     align-self: center;
     display: grid;
+    min-width: 0;
     padding: 38px;
 }
 
 .hero-copy h1 {
-    font-size: 2.55rem;
+    font-size: clamp(1.95rem, 2.9vw, 2.55rem);
     line-height: 1.03;
     margin: 0;
 }
@@ -485,6 +489,8 @@ a:hover {
     font-size: 1.42rem;
     line-height: 1.12;
     margin: 0;
+    overflow-wrap: anywhere;
+    word-break: break-word;
 }
 
 .article-copy h3 a:hover {
@@ -566,7 +572,7 @@ a:hover {
 .category-visual {
     background:
         linear-gradient(180deg, rgba(16, 20, 31, 0.02), rgba(16, 20, 31, 0.42)),
-        url("/static/images/editorial-fallback.png");
+        url("/static/images/african-journalist-fallback.png");
     background-position: center;
     background-size: cover;
     min-height: 150px;
@@ -899,7 +905,7 @@ code {
 .auth-copy {
     background:
         linear-gradient(180deg, rgba(16, 20, 31, 0.18), rgba(16, 20, 31, 0.7)),
-        url("/static/images/editorial-fallback.png");
+        url("/static/images/african-journalist-fallback.png");
     background-position: center;
     background-size: cover;
     border-radius: 8px;

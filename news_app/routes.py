@@ -61,7 +61,7 @@ def article_image_url(article) -> str:
         filename = article["image_filename"]
     if filename:
         return url_for("web.uploaded_file", filename=filename)
-    return url_for("static", filename="images/editorial-fallback.png")
+    return url_for("static", filename="images/african-journalist-fallback.png")
 
 
 @bp.before_app_request
