@@ -314,10 +314,11 @@ a:hover {
 .page-title h1 {
     font-family: Georgia, "Times New Roman", serif;
     font-weight: 700;
+    hyphens: none;
     letter-spacing: 0;
     max-width: 100%;
-    overflow-wrap: anywhere;
-    word-break: break-word;
+    overflow-wrap: normal;
+    word-break: normal;
 }
 
 .front-masthead h1 {
@@ -340,7 +341,7 @@ a:hover {
     border-radius: 8px;
     box-shadow: var(--shadow);
     display: grid;
-    grid-template-columns: minmax(0, 1.08fr) minmax(0, 0.92fr);
+    grid-template-columns: minmax(0, 1fr) minmax(360px, 0.98fr);
     min-height: 430px;
     overflow: hidden;
 }
@@ -382,12 +383,12 @@ a:hover {
     align-self: center;
     display: grid;
     min-width: 0;
-    padding: 38px;
+    padding: 34px 38px;
 }
 
 .hero-copy h1 {
-    font-size: clamp(1.95rem, 2.9vw, 2.55rem);
-    line-height: 1.03;
+    font-size: clamp(1.72rem, 2.25vw, 2.2rem);
+    line-height: 1.08;
     margin: 0;
 }
 
@@ -570,12 +571,18 @@ a:hover {
 }
 
 .category-visual {
-    background:
-        linear-gradient(180deg, rgba(16, 20, 31, 0.02), rgba(16, 20, 31, 0.42)),
-        url("/static/images/african-journalist-fallback.png");
-    background-position: center;
-    background-size: cover;
+    background: #d8dee7;
+    display: block;
     min-height: 150px;
+    overflow: hidden;
+}
+
+.category-visual img {
+    aspect-ratio: 16 / 9;
+    display: block;
+    height: 100%;
+    object-fit: cover;
+    width: 100%;
 }
 
 .category-copy {
@@ -691,6 +698,10 @@ table {
     padding: 16px;
 }
 
+.image-editor.compact {
+    margin: 4px 0 14px;
+}
+
 .image-editor h2 {
     font-family: Georgia, "Times New Roman", serif;
     margin: 0 0 12px;
@@ -701,6 +712,11 @@ table {
     border-radius: 8px;
     margin-bottom: 14px;
     overflow: hidden;
+}
+
+.image-preview.is-updated {
+    outline: 3px solid rgba(0, 95, 91, 0.2);
+    outline-offset: 3px;
 }
 
 .image-preview img {
@@ -821,6 +837,18 @@ th {
 
 tr:last-child td {
     border-bottom: 0;
+}
+
+.table-thumb {
+    width: 92px;
+}
+
+.table-thumb img {
+    aspect-ratio: 16 / 10;
+    border-radius: 6px;
+    display: block;
+    object-fit: cover;
+    width: 76px;
 }
 
 .badge {

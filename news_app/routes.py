@@ -25,6 +25,25 @@ from . import services
 
 bp = Blueprint("web", __name__)
 
+SEEDED_ARTICLE_IMAGE_SLUGS = {
+    "education-numerique-plateformes-fiabilite",
+    "presse-locale-donnees-ouvertes",
+    "sante-numerique-proteger-parcours-patients",
+    "cooperation-regionale-connecter-services-publics",
+    "culture-numerique-festivals-nouveau-public",
+    "startups-africaines-qualite-logicielle-strategique",
+    "gouvernance-donnees-pourquoi-api-comptent",
+    "cybersouverainete-equipes-techniques-reprennent-main",
+}
+
+SEEDED_CATEGORY_IMAGES = {
+    "technologie": "cybersouverainete-equipes-techniques-reprennent-main",
+    "economie": "startups-africaines-qualite-logicielle-strategique",
+    "culture": "culture-numerique-festivals-nouveau-public",
+    "international": "cooperation-regionale-connecter-services-publics",
+    "sciences": "sante-numerique-proteger-parcours-patients",
+}
+
 
 def allowed_image(filename: str) -> bool:
     if "." not in filename:
@@ -61,6 +80,26 @@ def article_image_url(article) -> str:
         filename = article["image_filename"]
     if filename:
         return url_for("web.uploaded_file", filename=filename)
+    slug = None
+    if article is not None and "slug" in article.keys():
+        slug = article["slug"]
+    if slug in SEEDED_ARTICLE_IMAGE_SLUGS:
+        return url_for("static", filename=f"images/articles/{slug}.png")
+    return url_for("static", filename="images/african-journalist-fallback.png")
+
+
+def category_image_url(category) -> str:
+    filename = None
+    if category is not None and "image_filename" in category.keys():
+        filename = category["image_filename"]
+    if filename:
+        return url_for("web.uploaded_file", filename=filename)
+    slug = None
+    if category is not None and "slug" in category.keys():
+        slug = category["slug"]
+    article_slug = SEEDED_CATEGORY_IMAGES.get(slug)
+    if article_slug:
+        return url_for("static", filename=f"images/articles/{article_slug}.png")
     return url_for("static", filename="images/african-journalist-fallback.png")
 
 
@@ -100,9 +139,17 @@ def role_required(*roles: str):
 @bp.context_processor
 def inject_categories():
     try:
-        return {"nav_categories": services.list_categories(), "article_image_url": article_image_url}
+        return {
+            "nav_categories": services.list_categories(),
+            "article_image_url": article_image_url,
+            "category_image_url": category_image_url,
+        }
     except sqlite3.OperationalError:
-        return {"nav_categories": [], "article_image_url": article_image_url}
+        return {
+            "nav_categories": [],
+            "article_image_url": article_image_url,
+            "category_image_url": category_image_url,
+        }
 
 
 @bp.route("/uploads/<path:filename>")
@@ -260,10 +307,15 @@ def delete_article(article_id: int):
 @role_required("editor", "admin")
 def manage_categories():
     if request.method == "POST":
+        saved_image = None
         try:
-            services.create_category(request.form["name"], request.form.get("description", ""))
+            saved_image = save_article_image(request.files.get("image"))
+            category = services.create_category(request.form["name"], request.form.get("description", ""))
+            if saved_image:
+                services.set_category_image(category["id"], saved_image)
             flash("Catégorie ajoutée.", "success")
-        except sqlite3.IntegrityError as exc:
+        except (sqlite3.IntegrityError, ValueError) as exc:
+            delete_article_image(saved_image)
             flash(f"Impossible d'ajouter la catégorie : {exc}", "error")
         return redirect(url_for("web.manage_categories"))
     return render_template("manage_categories.html", categories=services.list_categories())
@@ -276,11 +328,20 @@ def edit_category(category_id: int):
     if category is None:
         abort(404)
     if request.method == "POST":
+        saved_image = None
         try:
+            saved_image = save_article_image(request.files.get("image"))
             services.update_category(category_id, request.form["name"], request.form.get("description", ""))
+            if saved_image:
+                delete_article_image(category["image_filename"])
+                services.set_category_image(category_id, saved_image)
+            elif request.form.get("remove_image") == "on":
+                delete_article_image(category["image_filename"])
+                services.set_category_image(category_id, None)
             flash("Catégorie modifiée.", "success")
             return redirect(url_for("web.manage_categories"))
-        except sqlite3.IntegrityError as exc:
+        except (sqlite3.IntegrityError, ValueError) as exc:
+            delete_article_image(saved_image)
             flash(f"Impossible de modifier la catégorie : {exc}", "error")
     return render_template("category_form.html", category=category)
 
@@ -288,8 +349,11 @@ def edit_category(category_id: int):
 @bp.route("/editor/categories/<int:category_id>/delete", methods=("POST",))
 @role_required("editor", "admin")
 def delete_category(category_id: int):
+    category = services.get_category(category_id)
     try:
         services.delete_category(category_id)
+        if category:
+            delete_article_image(category["image_filename"])
         flash("Catégorie supprimée.", "success")
     except sqlite3.IntegrityError:
         flash("Cette catégorie contient encore des articles.", "error")

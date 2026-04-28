@@ -12,7 +12,9 @@
 <div class="category-grid">
     {% for category in categories %}
         <a class="category-item" href="{{ url_for('web.category_detail', slug=category.slug) }}">
-            <span class="category-visual media-{{ category.slug }}"></span>
+            <span class="category-visual">
+                <img src="{{ category_image_url(category) }}" alt="">
+            </span>
             <span class="category-copy">
                 <strong>{{ category.name }}</strong>
                 <span>{{ category.description }}</span>

@@ -77,15 +77,20 @@ def test_initial_database_contains_only_required_admin(client):
     assert categories.json["categories"] == []
 
 
-def test_frontend_uses_african_fallback_image_and_wraps_long_titles(client):
+def test_frontend_uses_images_and_keeps_hero_titles_readable(client):
     response = client.get("/static/styles.css")
     assert response.status_code == 200
     assert b"african-journalist-fallback.png" in response.data
-    assert b"overflow-wrap: anywhere" in response.data
+    assert b".hero-copy h1" in response.data
+    assert b"hyphens: none" in response.data
 
     image = client.get("/static/images/african-journalist-fallback.png")
     assert image.status_code == 200
     assert image.mimetype == "image/png"
+
+    script = client.get("/static/editor-preview.js")
+    assert script.status_code == 200
+    assert b"data-image-input" in script.data
 
 
 def test_seed_content_command_adds_editorial_articles(app, client):
@@ -100,9 +105,16 @@ def test_seed_content_command_adds_editorial_articles(app, client):
         article["slug"] == "cybersouverainete-equipes-techniques-reprennent-main"
         for article in response.json["articles"]
     )
+    for article in response.json["articles"]:
+        image = client.get(f"/static/images/articles/{article['slug']}.png")
+        assert image.status_code == 200
+        assert image.mimetype == "image/png"
 
     categories = client.get("/api/articles/grouped")
     assert len(categories.json["categories"]) == 5
+
+    home = client.get("/")
+    assert b"/static/images/articles/cybersouverainete-equipes-techniques-reprennent-main.png" in home.data
 
 
 def test_home_lists_created_articles_and_pagination(client, sample_content):
@@ -172,6 +184,8 @@ def test_admin_can_create_replace_and_remove_article_image(client, app):
         follow_redirects=True,
     )
     assert response.status_code == 200
+    assert b"editor-preview.js" in response.data
+    assert b"data-image-input" in response.data
 
     with app.app_context():
         article = services.get_article_by_slug("article-avec-image")
@@ -196,6 +210,66 @@ def test_admin_can_create_replace_and_remove_article_image(client, app):
         updated = services.get_article(article["id"])
         assert updated["image_filename"] is None
         assert not image_path.exists()
+
+
+def test_admin_can_create_replace_and_remove_category_image(client, app):
+    login(client)
+    response = client.post(
+        "/editor/categories",
+        data={
+            "name": "Rubrique imagee",
+            "description": "Une rubrique avec visuel.",
+            "image": (io.BytesIO(PNG_BYTES), "rubrique.png"),
+        },
+        content_type="multipart/form-data",
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    assert b"editor-preview.js" in response.data
+    assert b"data-image-input" in response.data
+
+    with app.app_context():
+        category = services.get_category_by_slug("rubrique-imagee")
+        category_id = category["id"]
+        assert category["image_filename"].endswith(".png")
+        first_image = Path(app.config["UPLOAD_FOLDER"]) / category["image_filename"]
+        assert first_image.exists()
+
+    edit_page = client.get(f"/editor/categories/{category_id}/edit")
+    assert edit_page.status_code == 200
+    assert b"data-image-preview-img" in edit_page.data
+
+    response = client.post(
+        f"/editor/categories/{category_id}/edit",
+        data={
+            "name": "Rubrique imagee",
+            "description": "Une rubrique avec visuel.",
+            "image": (io.BytesIO(PNG_BYTES), "rubrique-remplacee.png"),
+        },
+        content_type="multipart/form-data",
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        replaced = services.get_category(category_id)
+        second_image = Path(app.config["UPLOAD_FOLDER"]) / replaced["image_filename"]
+        assert second_image.exists()
+        assert not first_image.exists()
+
+    response = client.post(
+        f"/editor/categories/{category_id}/edit",
+        data={
+            "name": "Rubrique imagee",
+            "description": "Une rubrique avec visuel.",
+            "remove_image": "on",
+        },
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        updated = services.get_category(category_id)
+        assert updated["image_filename"] is None
+        assert not second_image.exists()
 
 
 def test_soap_auth_and_list_users(client, sample_content):

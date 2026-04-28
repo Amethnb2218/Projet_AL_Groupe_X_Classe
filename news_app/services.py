@@ -117,10 +117,10 @@ def create_category(name: str, description: str):
     db = get_db()
     cursor = db.execute(
         """
-        INSERT INTO categories (name, slug, description, created_at)
-        VALUES (?, ?, ?, ?)
+        INSERT INTO categories (name, slug, description, image_filename, created_at)
+        VALUES (?, ?, ?, ?, ?)
         """,
-        (name.strip(), unique_slug("categories", name), description.strip(), utc_now()),
+        (name.strip(), unique_slug("categories", name), description.strip(), None, utc_now()),
     )
     db.commit()
     return get_category(cursor.lastrowid)
@@ -131,6 +131,16 @@ def update_category(category_id: int, name: str, description: str):
     db.execute(
         "UPDATE categories SET name = ?, slug = ?, description = ? WHERE id = ?",
         (name.strip(), unique_slug("categories", name, category_id), description.strip(), category_id),
+    )
+    db.commit()
+    return get_category(category_id)
+
+
+def set_category_image(category_id: int, image_filename: str | None):
+    db = get_db()
+    db.execute(
+        "UPDATE categories SET image_filename = ? WHERE id = ?",
+        (image_filename, category_id),
     )
     db.commit()
     return get_category(category_id)

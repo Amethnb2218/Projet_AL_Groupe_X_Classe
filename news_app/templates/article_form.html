@@ -42,16 +42,16 @@
             </div>
             <aside class="image-editor">
                 <h2>Image de l'article</h2>
-                <div class="image-preview">
-                    <img src="{{ article_image_url(article) if article else url_for('static', filename='images/african-journalist-fallback.png') }}" alt="">
+                <div class="image-preview" data-image-preview>
+                    <img data-image-preview-img src="{{ article_image_url(article) if article else url_for('static', filename='images/african-journalist-fallback.png') }}" alt="">
                 </div>
                 <label>
                     Ajouter ou remplacer l'image
-                    <input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif">
+                    <input data-image-input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif">
                 </label>
                 {% if article and article.image_filename %}
                     <label class="check">
-                        <input type="checkbox" name="remove_image">
+                        <input data-image-remove type="checkbox" name="remove_image">
                         Retirer l'image actuelle
                     </label>
                 {% endif %}
@@ -60,4 +60,7 @@
         </div>
     </form>
 </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('static', filename='editor-preview.js') }}" defer></script>
 {% endblock %}

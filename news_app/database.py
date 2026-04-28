@@ -8,11 +8,24 @@ from flask import current_app, g
 from werkzeug.security import generate_password_hash
 
 
+def ensure_schema_updates(db: sqlite3.Connection) -> None:
+    table = db.execute(
+        "SELECT name FROM sqlite_master WHERE type = 'table' AND name = 'categories'"
+    ).fetchone()
+    if table is None:
+        return
+    columns = {row["name"] for row in db.execute("PRAGMA table_info(categories)").fetchall()}
+    if "image_filename" not in columns:
+        db.execute("ALTER TABLE categories ADD COLUMN image_filename TEXT")
+        db.commit()
+
+
 def get_db() -> sqlite3.Connection:
     if "db" not in g:
         g.db = sqlite3.connect(current_app.config["DATABASE"])
         g.db.row_factory = sqlite3.Row
         g.db.execute("PRAGMA foreign_keys = ON")
+        ensure_schema_updates(g.db)
     return g.db
 
 

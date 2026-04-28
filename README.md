@@ -51,7 +51,8 @@ Cette commande crée des catégories et huit articles publiés. Elle est idempot
 - Gestion des articles et catégories par les éditeurs.
 - Gestion des utilisateurs par les administrateurs.
 - Génération et suppression des jetons SOAP par les administrateurs.
-- Upload, changement et suppression d'image pour chaque article.
+- Upload, changement, suppression et prévisualisation d'image pour chaque article.
+- Upload, changement, suppression et prévisualisation d'image pour chaque catégorie.
 
 ## Services REST
 

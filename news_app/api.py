@@ -59,6 +59,7 @@ def grouped_articles():
                 "name": category["name"],
                 "slug": category["slug"],
                 "description": category["description"],
+                "image_filename": category["image_filename"],
                 "articles": [services.article_to_dict(row) for row in article_rows],
             }
         )
@@ -70,6 +71,7 @@ def grouped_articles():
             SubElement(category_node, "name").text = category["name"]
             SubElement(category_node, "slug").text = category["slug"]
             SubElement(category_node, "description").text = category["description"]
+            SubElement(category_node, "image_filename").text = category["image_filename"] or ""
             articles_node = SubElement(category_node, "articles")
             for article in category["articles"]:
                 item = SubElement(articles_node, "article", id=str(article["id"]))
@@ -103,6 +105,7 @@ def category_articles(category_id: int):
                 "name": category["name"],
                 "slug": category["slug"],
                 "description": category["description"],
+                "image_filename": category["image_filename"],
             },
             "articles": [services.article_to_dict(row) for row in rows],
         }

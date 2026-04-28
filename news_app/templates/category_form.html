@@ -3,16 +3,40 @@
 {% block content %}
 <div class="form-panel">
     <h1>Modifier la catégorie</h1>
-    <form method="post">
-        <label>
-            Nom
-            <input name="name" required value="{{ category.name }}">
-        </label>
-        <label>
-            Description
-            <textarea name="description" rows="5">{{ category.description }}</textarea>
-        </label>
-        <button class="button primary" type="submit">Enregistrer</button>
+    <form method="post" enctype="multipart/form-data">
+        <div class="editor-grid">
+            <div>
+                <label>
+                    Nom
+                    <input name="name" required value="{{ category.name }}">
+                </label>
+                <label>
+                    Description
+                    <textarea name="description" rows="5">{{ category.description }}</textarea>
+                </label>
+                <button class="button primary" type="submit">Enregistrer</button>
+            </div>
+            <aside class="image-editor">
+                <h2>Image de la catégorie</h2>
+                <div class="image-preview" data-image-preview>
+                    <img data-image-preview-img src="{{ category_image_url(category) }}" alt="">
+                </div>
+                <label>
+                    Ajouter ou remplacer l'image
+                    <input data-image-input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif">
+                </label>
+                {% if category.image_filename %}
+                    <label class="check">
+                        <input data-image-remove type="checkbox" name="remove_image">
+                        Retirer l'image actuelle
+                    </label>
+                {% endif %}
+                <p class="hint">Formats acceptés : PNG, JPG, JPEG, WEBP ou GIF. Taille maximale : 4 Mo.</p>
+            </aside>
+        </div>
     </form>
 </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('static', filename='editor-preview.js') }}" defer></script>
 {% endblock %}

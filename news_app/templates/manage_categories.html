@@ -23,7 +23,7 @@
 <div class="split">
     <div class="form-panel">
         <h2>Ajouter</h2>
-        <form method="post">
+        <form method="post" enctype="multipart/form-data">
             <label>
                 Nom
                 <input name="name" required>
@@ -32,6 +32,17 @@
                 Description
                 <textarea name="description" rows="4"></textarea>
             </label>
+            <div class="image-editor compact">
+                <h2>Image de la catégorie</h2>
+                <div class="image-preview" data-image-preview>
+                    <img data-image-preview-img src="{{ url_for('static', filename='images/african-journalist-fallback.png') }}" alt="">
+                </div>
+                <label>
+                    Ajouter une image
+                    <input data-image-input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif">
+                </label>
+                <p class="hint">PNG, JPG, JPEG, WEBP ou GIF. Taille maximale : 4 Mo.</p>
+            </div>
             <button class="button primary" type="submit">Ajouter</button>
         </form>
     </div>
@@ -40,6 +51,7 @@
         <table>
             <thead>
                 <tr>
+                    <th>Image</th>
                     <th>Nom</th>
                     <th>Description</th>
                     <th>Actions</th>
@@ -48,6 +60,9 @@
             <tbody>
                 {% for category in categories %}
                     <tr>
+                        <td class="table-thumb">
+                            <img src="{{ category_image_url(category) }}" alt="">
+                        </td>
                         <td><strong>{{ category.name }}</strong></td>
                         <td>{{ category.description }}</td>
                         <td class="actions">
@@ -62,4 +77,7 @@
         </table>
     </div>
 </div>
+{% endblock %}
+{% block scripts %}
+    <script src="{{ url_for('static', filename='editor-preview.js') }}" defer></script>
 {% endblock %}

@@ -17,6 +17,7 @@ CREATE TABLE categories (
     name TEXT NOT NULL UNIQUE,
     slug TEXT NOT NULL UNIQUE,
     description TEXT NOT NULL DEFAULT '',
+    image_filename TEXT,
     created_at TEXT NOT NULL
 );
 
