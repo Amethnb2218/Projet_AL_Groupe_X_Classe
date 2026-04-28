@@ -5,23 +5,27 @@
     <div>
         <p class="eyebrow">Rubriques</p>
         <h1>Gestion des catégories</h1>
-        <p>Les éditeurs maintiennent les rubriques du site.</p>
+        <p>Structurez la navigation éditoriale et les visuels associés aux rubriques.</p>
     </div>
 </div>
 
-<div class="metric-grid">
+<div class="metric-grid dashboard-metrics">
     <div class="metric-card">
         <span>Total</span>
         <strong>{{ categories|length }}</strong>
     </div>
     <div class="metric-card">
-        <span>Classement</span>
-        <strong>Éditorial</strong>
+        <span>Avec image</span>
+        <strong>{{ categories|selectattr("image_filename")|list|length }}</strong>
+    </div>
+    <div class="metric-card">
+        <span>Navigation</span>
+        <strong>Active</strong>
     </div>
 </div>
 
-<div class="split">
-    <div class="form-panel">
+<div class="split management-split">
+    <div class="form-panel admin-form-card">
         <h2>Ajouter</h2>
         <form method="post" enctype="multipart/form-data">
             <label>
@@ -47,7 +51,7 @@
         </form>
     </div>
 
-    <div class="table-wrap">
+    <div class="table-wrap admin-table">
         <table>
             <thead>
                 <tr>
@@ -66,6 +70,7 @@
                         <td><strong>{{ category.name }}</strong></td>
                         <td>{{ category.description }}</td>
                         <td class="actions">
+                            <a class="button small" href="{{ url_for('web.category_detail', slug=category.slug) }}">Voir</a>
                             <a class="button small" href="{{ url_for('web.edit_category', category_id=category.id) }}">Modifier</a>
                             <form method="post" action="{{ url_for('web.delete_category', category_id=category.id) }}">
                                 <button class="button danger small" type="submit">Supprimer</button>

@@ -28,6 +28,7 @@ CREATE TABLE articles (
     summary TEXT NOT NULL,
     content TEXT NOT NULL,
     image_filename TEXT,
+    image_hidden INTEGER NOT NULL DEFAULT 0,
     category_id INTEGER REFERENCES categories(id) ON DELETE SET NULL,
     author_id INTEGER REFERENCES users(id) ON DELETE SET NULL,
     published INTEGER NOT NULL DEFAULT 1,

@@ -245,8 +245,8 @@ def create_article(title: str, summary: str, content: str, category_id: int, aut
     cursor = db.execute(
         """
         INSERT INTO articles
-            (title, slug, summary, content, image_filename, category_id, author_id, published, created_at, updated_at)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            (title, slug, summary, content, image_filename, image_hidden, category_id, author_id, published, created_at, updated_at)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """,
         (
             title.strip(),
@@ -254,6 +254,7 @@ def create_article(title: str, summary: str, content: str, category_id: int, aut
             summary.strip(),
             content.strip(),
             None,
+            0,
             category_id,
             author_id,
             1 if published else 0,
@@ -297,11 +298,11 @@ def update_article(
     return get_article(article_id)
 
 
-def set_article_image(article_id: int, image_filename: str | None):
+def set_article_image(article_id: int, image_filename: str | None, hidden: bool = False):
     db = get_db()
     db.execute(
-        "UPDATE articles SET image_filename = ?, updated_at = ? WHERE id = ?",
-        (image_filename, utc_now(), article_id),
+        "UPDATE articles SET image_filename = ?, image_hidden = ?, updated_at = ? WHERE id = ?",
+        (image_filename, 1 if hidden else 0, utc_now(), article_id),
     )
     db.commit()
     return get_article(article_id)
@@ -321,6 +322,7 @@ def article_to_dict(article) -> dict:
         "summary": article["summary"],
         "content": article["content"],
         "image_filename": article["image_filename"],
+        "image_hidden": bool(article["image_hidden"]) if "image_hidden" in article.keys() else False,
         "published": bool(article["published"]),
         "created_at": article["created_at"],
         "updated_at": article["updated_at"],

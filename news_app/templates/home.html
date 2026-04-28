@@ -9,10 +9,15 @@
 
 {% if articles %}
     {% set featured = articles[0] %}
+    {% set featured_image = article_image_url(featured) %}
     <section class="hero-story">
         <a class="hero-media" href="{{ url_for('web.article_detail', slug=featured.slug) }}" aria-label="{{ featured.title }}">
-            <img src="{{ article_image_url(featured) }}" alt="">
-            <span>{{ featured.category_name }}</span>
+            {% if featured_image %}
+                <img src="{{ featured_image }}" alt="">
+            {% else %}
+                <div class="media-placeholder">{{ featured.category_name }}</div>
+            {% endif %}
+            <span class="media-badge">{{ featured.category_name }}</span>
         </a>
         <div class="hero-copy">
             <div class="kicker">À la une &middot; {{ featured.category_name }}</div>
@@ -38,10 +43,15 @@
 
 <div class="article-list">
     {% for article in articles[1:] %}
+        {% set image_url = article_image_url(article) %}
         <article class="article-card">
             <a class="article-media" href="{{ url_for('web.article_detail', slug=article.slug) }}" aria-label="{{ article.title }}">
-                <img src="{{ article_image_url(article) }}" alt="">
-                <span>{{ article.category_name }}</span>
+                {% if image_url %}
+                    <img src="{{ image_url }}" alt="">
+                {% else %}
+                    <div class="media-placeholder">{{ article.category_name }}</div>
+                {% endif %}
+                <span class="media-badge">{{ article.category_name }}</span>
             </a>
             <div class="article-copy">
                 <div class="meta">{{ article.category_name }} &middot; {{ article.created_at|date_fr }}</div>

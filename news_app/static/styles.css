@@ -364,9 +364,9 @@ a:hover {
     width: 100%;
 }
 
-.hero-media span,
-.article-media span,
-.article-hero-image span {
+.hero-media .media-badge,
+.article-media .media-badge,
+.article-hero-image .media-badge {
     background: rgba(17, 23, 36, 0.88);
     border-radius: 999px;
     bottom: 18px;
@@ -377,6 +377,24 @@ a:hover {
     padding: 7px 10px;
     position: absolute;
     text-transform: uppercase;
+}
+
+.media-placeholder {
+    align-items: center;
+    background:
+        linear-gradient(135deg, rgba(17, 23, 36, 0.92), rgba(0, 95, 91, 0.78)),
+        var(--ink);
+    color: white;
+    display: flex;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.35rem;
+    font-weight: 700;
+    height: 100%;
+    justify-content: center;
+    min-height: inherit;
+    padding: 22px;
+    text-align: center;
+    width: 100%;
 }
 
 .hero-copy {
@@ -432,6 +450,11 @@ a:hover {
     gap: 18px;
     justify-content: space-between;
     margin: 28px 0 16px;
+}
+
+.page-title.compact {
+    align-items: flex-start;
+    margin: 0 0 18px;
 }
 
 .section-heading h2,
@@ -712,6 +735,7 @@ table {
     border-radius: 8px;
     margin-bottom: 14px;
     overflow: hidden;
+    position: relative;
 }
 
 .image-preview.is-updated {
@@ -719,11 +743,30 @@ table {
     outline-offset: 3px;
 }
 
+.image-preview.is-empty::before {
+    align-items: center;
+    background: linear-gradient(135deg, #111724, #005f5b);
+    color: white;
+    content: "Sans image";
+    display: flex;
+    font-weight: 900;
+    inset: 0;
+    justify-content: center;
+    letter-spacing: 0.02em;
+    position: absolute;
+    text-transform: uppercase;
+    z-index: 1;
+}
+
 .image-preview img {
     aspect-ratio: 16 / 10;
     display: block;
     object-fit: cover;
     width: 100%;
+}
+
+.image-preview.is-empty img {
+    visibility: hidden;
 }
 
 form {
@@ -779,11 +822,24 @@ textarea {
     grid-template-columns: minmax(260px, 360px) minmax(0, 1fr);
 }
 
+.management-split {
+    gap: 22px;
+    grid-template-columns: minmax(280px, 380px) minmax(0, 1fr);
+}
+
+.admin-form-card {
+    border-left: 4px solid var(--accent);
+}
+
 .metric-grid {
     display: grid;
     gap: 14px;
     grid-template-columns: repeat(3, minmax(0, 1fr));
     margin: 0 0 18px;
+}
+
+.dashboard-metrics {
+    margin-bottom: 22px;
 }
 
 .metric-card {
@@ -811,6 +867,13 @@ textarea {
 
 .table-wrap {
     overflow-x: auto;
+}
+
+.admin-table {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    box-shadow: 0 14px 34px rgba(16, 20, 31, 0.06);
 }
 
 table {
@@ -843,12 +906,59 @@ tr:last-child td {
     width: 92px;
 }
 
+.table-thumb.large {
+    width: 132px;
+}
+
 .table-thumb img {
     aspect-ratio: 16 / 10;
     border-radius: 6px;
     display: block;
     object-fit: cover;
     width: 76px;
+}
+
+.table-thumb.large img,
+.table-thumb.large .thumb-placeholder {
+    width: 112px;
+}
+
+.thumb-placeholder {
+    align-items: center;
+    aspect-ratio: 16 / 10;
+    background: linear-gradient(135deg, #111724, #005f5b);
+    border-radius: 6px;
+    color: white;
+    display: flex;
+    font-size: 0.72rem;
+    font-weight: 900;
+    justify-content: center;
+    line-height: 1.1;
+    padding: 8px;
+    text-align: center;
+    text-transform: uppercase;
+    width: 76px;
+}
+
+.table-title {
+    max-width: 420px;
+}
+
+.table-title strong,
+.table-title span,
+.table-title small {
+    display: block;
+}
+
+.table-title span {
+    color: var(--soft-ink);
+    margin-top: 5px;
+}
+
+.table-title small {
+    color: var(--muted);
+    font-weight: 800;
+    margin-top: 6px;
 }
 
 .badge {
@@ -880,6 +990,47 @@ tr:last-child td {
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
+}
+
+.account-panel {
+    display: grid;
+    gap: 16px;
+}
+
+.account-avatar {
+    align-items: center;
+    background: linear-gradient(135deg, #111724, #005f5b);
+    border-radius: 8px;
+    color: white;
+    display: flex;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 3rem;
+    font-weight: 700;
+    height: 160px;
+    justify-content: center;
+    text-transform: uppercase;
+}
+
+.definition-list {
+    display: grid;
+    gap: 10px;
+    margin: 0;
+}
+
+.definition-list div {
+    border-top: 1px solid var(--line-cool);
+    padding-top: 10px;
+}
+
+.definition-list dt {
+    color: var(--muted);
+    font-size: 0.78rem;
+    font-weight: 900;
+    text-transform: uppercase;
+}
+
+.definition-list dd {
+    margin: 3px 0 0;
 }
 
 .messages {

@@ -54,6 +54,15 @@ Cette commande crée des catégories et huit articles publiés. Elle est idempot
 - Upload, changement, suppression et prévisualisation d'image pour chaque article.
 - Upload, changement, suppression et prévisualisation d'image pour chaque catégorie.
 
+## Conformité au cahier des charges
+
+- Visiteur : consultation de l'accueil, du détail des articles et des articles par catégorie.
+- Éditeur : authentification, gestion complète des articles et des catégories.
+- Administrateur : gestion des utilisateurs et des jetons SOAP en plus des droits éditeur.
+- REST : articles en JSON/XML, articles groupés par catégorie en JSON/XML, articles d'une catégorie en JSON/XML.
+- SOAP : authentification, liste, ajout, modification et suppression des utilisateurs avec jeton pour les opérations protégées.
+- Client Python : authentification SOAP puis gestion distante des utilisateurs pour les administrateurs.
+
 ## Services REST
 
 Les endpoints retournent du JSON par défaut et du XML avec `?format=xml`.

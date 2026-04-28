@@ -5,11 +5,11 @@
     <div>
         <p class="eyebrow">Administration</p>
         <h1>Gestion des utilisateurs</h1>
-        <p>Réservé aux administrateurs.</p>
+        <p>Contrôlez les comptes, les rôles et l'accès aux opérations sensibles.</p>
     </div>
 </div>
 
-<div class="metric-grid">
+<div class="metric-grid dashboard-metrics">
     <div class="metric-card">
         <span>Total</span>
         <strong>{{ users|length }}</strong>
@@ -24,8 +24,8 @@
     </div>
 </div>
 
-<div class="split">
-    <div class="form-panel">
+<div class="split management-split">
+    <div class="form-panel admin-form-card">
         <h2>Ajouter</h2>
         <form method="post">
             <label>
@@ -51,13 +51,14 @@
         </form>
     </div>
 
-    <div class="table-wrap">
+    <div class="table-wrap admin-table">
         <table>
             <thead>
                 <tr>
                     <th>Login</th>
                     <th>Nom</th>
                     <th>Rôle</th>
+                    <th>Créé le</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -67,6 +68,7 @@
                         <td><strong>{{ user.login }}</strong></td>
                         <td>{{ user.full_name }}</td>
                         <td><span class="badge {{ 'admin' if user.role == 'admin' else 'success' }}">{{ "Éditeur" if user.role == "editor" else "Administrateur" }}</span></td>
+                        <td>{{ user.created_at|date_fr }}</td>
                         <td class="actions">
                             <a class="button small" href="{{ url_for('web.edit_user', user_id=user.id) }}">Modifier</a>
                             <form method="post" action="{{ url_for('web.delete_user', user_id=user.id) }}">

@@ -2,9 +2,14 @@
 {% block title %}{{ article.title }} - AL News{% endblock %}
 {% block content %}
 <article class="article-detail">
+    {% set image_url = article_image_url(article) %}
     <div class="article-hero-image">
-        <img src="{{ article_image_url(article) }}" alt="">
-        <span>{{ article.category_name }}</span>
+        {% if image_url %}
+            <img src="{{ image_url }}" alt="">
+        {% else %}
+            <div class="media-placeholder">{{ article.category_name }}</div>
+        {% endif %}
+        <span class="media-badge">{{ article.category_name }}</span>
     </div>
     <div class="article-detail-copy">
         <div class="meta">{{ article.category_name }} &middot; {{ article.author_name }} &middot; {{ article.created_at|date_fr }}</div>

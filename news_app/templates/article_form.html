@@ -41,15 +41,16 @@
                 <button class="button primary" type="submit" {% if not categories %}disabled{% endif %}>Enregistrer</button>
             </div>
             <aside class="image-editor">
+                {% set preview_url = article_image_url(article) if article else url_for('static', filename='images/african-journalist-fallback.png') %}
                 <h2>Image de l'article</h2>
-                <div class="image-preview" data-image-preview>
-                    <img data-image-preview-img src="{{ article_image_url(article) if article else url_for('static', filename='images/african-journalist-fallback.png') }}" alt="">
+                <div class="image-preview {{ 'is-empty' if not preview_url }}" data-image-preview data-empty="{{ 'true' if not preview_url else 'false' }}">
+                    <img data-image-preview-img src="{{ preview_url or url_for('static', filename='images/african-journalist-fallback.png') }}" alt="">
                 </div>
                 <label>
                     Ajouter ou remplacer l'image
                     <input data-image-input type="file" name="image" accept=".png,.jpg,.jpeg,.webp,.gif,image/png,image/jpeg,image/webp,image/gif">
                 </label>
-                {% if article and article.image_filename %}
+                {% if article %}
                     <label class="check">
                         <input data-image-remove type="checkbox" name="remove_image">
                         Retirer l'image actuelle

@@ -18,6 +18,10 @@ def ensure_schema_updates(db: sqlite3.Connection) -> None:
     if "image_filename" not in columns:
         db.execute("ALTER TABLE categories ADD COLUMN image_filename TEXT")
         db.commit()
+    article_columns = {row["name"] for row in db.execute("PRAGMA table_info(articles)").fetchall()}
+    if "image_hidden" not in article_columns:
+        db.execute("ALTER TABLE articles ADD COLUMN image_hidden INTEGER NOT NULL DEFAULT 0")
+        db.commit()
 
 
 def get_db() -> sqlite3.Connection:

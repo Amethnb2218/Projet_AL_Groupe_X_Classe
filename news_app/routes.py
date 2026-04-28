@@ -74,7 +74,9 @@ def delete_article_image(filename: str | None) -> None:
         image_path.unlink()
 
 
-def article_image_url(article) -> str:
+def article_image_url(article) -> str | None:
+    if article is not None and "image_hidden" in article.keys() and article["image_hidden"]:
+        return None
     filename = None
     if article is not None and "image_filename" in article.keys():
         filename = article["image_filename"]
@@ -283,7 +285,7 @@ def edit_article(article_id: int):
                 services.set_article_image(article_id, saved_image)
             elif request.form.get("remove_image") == "on":
                 delete_article_image(article["image_filename"])
-                services.set_article_image(article_id, None)
+                services.set_article_image(article_id, None, hidden=True)
             flash("Article modifié.", "success")
             return redirect(url_for("web.manage_articles"))
         except (sqlite3.IntegrityError, ValueError) as exc:

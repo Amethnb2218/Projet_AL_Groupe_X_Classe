@@ -135,11 +135,28 @@ def test_rest_articles_json_and_xml(client, sample_content):
     assert json_response.status_code == 200
     assert json_response.json["articles"]
     assert "image_filename" in json_response.json["articles"][0]
+    assert "image_hidden" in json_response.json["articles"][0]
 
     xml_response = client.get("/api/articles?format=xml")
     assert xml_response.status_code == 200
     assert xml_response.mimetype == "application/xml"
     assert b"<articles>" in xml_response.data
+    assert b"<image_hidden>false</image_hidden>" in xml_response.data
+
+
+def test_rest_grouped_and_category_articles_support_xml(client, sample_content):
+    grouped = client.get("/api/articles/grouped?format=xml")
+    assert grouped.status_code == 200
+    assert grouped.mimetype == "application/xml"
+    assert b"<categories>" in grouped.data
+    assert b"image_filename" in grouped.data
+
+    category_id = sample_content["category"]["id"]
+    category = client.get(f"/api/categories/{category_id}/articles?format=xml")
+    assert category.status_code == 200
+    assert category.mimetype == "application/xml"
+    assert b"<category" in category.data
+    assert b"<articles>" in category.data
 
 
 def test_rest_articles_by_category(client, sample_content):
@@ -152,7 +169,10 @@ def test_rest_articles_by_category(client, sample_content):
 
 def test_editor_can_manage_articles_but_not_users(client, sample_content):
     login(client, "editor", "editor123")
-    assert client.get("/editor/articles").status_code == 200
+    articles = client.get("/editor/articles")
+    assert articles.status_code == 200
+    assert b"table-thumb large" in articles.data
+    assert b"admin-table" in articles.data
     assert client.get("/admin/users").status_code == 403
 
 
@@ -209,7 +229,59 @@ def test_admin_can_create_replace_and_remove_article_image(client, app):
     with app.app_context():
         updated = services.get_article(article["id"])
         assert updated["image_filename"] is None
+        assert updated["image_hidden"]
         assert not image_path.exists()
+
+
+def test_admin_can_hide_seeded_article_image_and_restore_upload(client, app):
+    runner = app.test_cli_runner()
+    result = runner.invoke(args=["seed-content"])
+    assert result.exit_code == 0
+    login(client)
+
+    with app.app_context():
+        article = services.get_article_by_slug("cybersouverainete-equipes-techniques-reprennent-main")
+        article_id = article["id"]
+        category_id = article["category_id"]
+        form_data = {
+            "title": article["title"],
+            "summary": article["summary"],
+            "content": article["content"],
+            "category_id": str(category_id),
+            "published": "on",
+        }
+
+    edit_page = client.get(f"/editor/articles/{article_id}/edit")
+    assert edit_page.status_code == 200
+    assert b"Retirer l'image actuelle" in edit_page.data
+
+    response = client.post(
+        f"/editor/articles/{article_id}/edit",
+        data={**form_data, "remove_image": "on"},
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    home = client.get("/")
+    assert b"/static/images/articles/cybersouverainete-equipes-techniques-reprennent-main.png" not in home.data
+    assert b"media-placeholder" in home.data
+
+    with app.app_context():
+        hidden = services.get_article(article_id)
+        assert hidden["image_filename"] is None
+        assert hidden["image_hidden"]
+
+    response = client.post(
+        f"/editor/articles/{article_id}/edit",
+        data={**form_data, "image": (io.BytesIO(PNG_BYTES), "restauree.png")},
+        content_type="multipart/form-data",
+        follow_redirects=True,
+    )
+    assert response.status_code == 200
+    with app.app_context():
+        restored = services.get_article(article_id)
+        assert restored["image_filename"].endswith(".png")
+        assert not restored["image_hidden"]
+        assert (Path(app.config["UPLOAD_FOLDER"]) / restored["image_filename"]).exists()
 
 
 def test_admin_can_create_replace_and_remove_category_image(client, app):
@@ -298,6 +370,56 @@ def test_soap_rejects_invalid_token(client):
     )
     assert response.status_code == 401
     assert b"Jeton" in response.data
+
+
+def test_soap_token_allows_full_user_management(client, sample_content, app):
+    token = sample_content["token"]
+    added = client.post(
+        "/soap",
+        data=soap(
+            "addUser",
+            {
+                "token": token,
+                "login": "soap-editor",
+                "full_name": "Éditeur SOAP",
+                "role": "editor",
+                "password": "secret123",
+            },
+        ),
+        content_type="text/xml",
+    )
+    assert added.status_code == 201
+    assert b"<login>soap-editor</login>" in added.data
+
+    with app.app_context():
+        user = services.authenticate("soap-editor", "secret123")
+        user_id = user["id"]
+
+    updated = client.post(
+        "/soap",
+        data=soap(
+            "updateUser",
+            {
+                "token": token,
+                "id": str(user_id),
+                "login": "soap-admin-test",
+                "full_name": "Administrateur SOAP",
+                "role": "admin",
+                "password": "",
+            },
+        ),
+        content_type="text/xml",
+    )
+    assert updated.status_code == 200
+    assert b"<role>admin</role>" in updated.data
+
+    deleted = client.post(
+        "/soap",
+        data=soap("deleteUser", {"token": token, "id": str(user_id)}),
+        content_type="text/xml",
+    )
+    assert deleted.status_code == 200
+    assert f"<deleted>{user_id}</deleted>".encode() in deleted.data
 
 
 def test_admin_can_delete_user_with_articles(client, sample_content):

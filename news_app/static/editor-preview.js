@@ -13,7 +13,16 @@
         }
 
         const originalSrc = image.getAttribute("src");
+        const startsEmpty = preview && preview.dataset.empty === "true";
         let objectUrl = null;
+
+        function resetPreview() {
+            image.setAttribute("src", originalSrc);
+            if (preview) {
+                preview.classList.remove("is-updated");
+                preview.classList.toggle("is-empty", startsEmpty);
+            }
+        }
 
         input.addEventListener("change", function () {
             if (objectUrl) {
@@ -23,8 +32,7 @@
 
             const file = input.files && input.files[0];
             if (!file) {
-                image.setAttribute("src", originalSrc);
-                preview && preview.classList.remove("is-updated");
+                resetPreview();
                 return;
             }
 
@@ -34,7 +42,10 @@
 
             objectUrl = window.URL.createObjectURL(file);
             image.setAttribute("src", objectUrl);
-            preview && preview.classList.add("is-updated");
+            if (preview) {
+                preview.classList.add("is-updated");
+                preview.classList.remove("is-empty");
+            }
             if (removeInput) {
                 removeInput.checked = false;
             }
@@ -44,7 +55,12 @@
             removeInput.addEventListener("change", function () {
                 if (removeInput.checked && !input.files.length) {
                     image.setAttribute("src", originalSrc);
-                    preview && preview.classList.remove("is-updated");
+                    if (preview) {
+                        preview.classList.remove("is-updated");
+                        preview.classList.add("is-empty");
+                    }
+                } else if (!removeInput.checked && !input.files.length) {
+                    resetPreview();
                 }
             });
         }

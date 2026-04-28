@@ -29,6 +29,7 @@ def append_article(parent: Element, article) -> None:
     for key in ("title", "slug", "summary", "content", "created_at", "updated_at"):
         SubElement(item, key).text = str(data[key])
     SubElement(item, "image_filename").text = data["image_filename"] or ""
+    SubElement(item, "image_hidden").text = "true" if data["image_hidden"] else "false"
     SubElement(item, "published").text = "true" if data["published"] else "false"
     category = SubElement(item, "category", id=str(data["category"]["id"]))
     SubElement(category, "name").text = data["category"]["name"]

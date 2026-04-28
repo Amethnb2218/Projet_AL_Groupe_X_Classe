@@ -5,12 +5,12 @@
     <div>
         <p class="eyebrow">Rédaction</p>
         <h1>Gestion des articles</h1>
-        <p>Liste, ajout, modification et suppression des articles.</p>
+        <p>Pilotez les contenus publiés, les brouillons, les rubriques et les visuels.</p>
     </div>
-    <a class="button primary" href="{{ url_for('web.new_article') }}">Ajouter</a>
+    <a class="button primary" href="{{ url_for('web.new_article') }}">Nouvel article</a>
 </div>
 
-<div class="metric-grid">
+<div class="metric-grid dashboard-metrics">
     <div class="metric-card">
         <span>Total</span>
         <strong>{{ articles|length }}</strong>
@@ -20,28 +20,46 @@
         <strong>{{ articles|selectattr("published")|list|length }}</strong>
     </div>
     <div class="metric-card">
-        <span>Workflow</span>
-        <strong>Éditeur</strong>
+        <span>Images</span>
+        <strong>{{ articles|rejectattr("image_hidden")|list|length }}</strong>
     </div>
 </div>
 
-<div class="table-wrap">
+<div class="table-wrap admin-table">
     <table>
         <thead>
             <tr>
-                <th>Titre</th>
+                <th>Visuel</th>
+                <th>Article</th>
                 <th>Catégorie</th>
                 <th>Statut</th>
+                <th>Mise à jour</th>
                 <th>Actions</th>
             </tr>
         </thead>
         <tbody>
             {% for article in articles %}
+                {% set image_url = article_image_url(article) %}
                 <tr>
-                    <td><strong>{{ article.title }}</strong></td>
+                    <td class="table-thumb large">
+                        {% if image_url %}
+                            <img src="{{ image_url }}" alt="">
+                        {% else %}
+                            <span class="thumb-placeholder">Sans image</span>
+                        {% endif %}
+                    </td>
+                    <td class="table-title">
+                        <strong>{{ article.title }}</strong>
+                        <span>{{ article.summary }}</span>
+                        <small>{{ article.author_name }}</small>
+                    </td>
                     <td>{{ article.category_name }}</td>
                     <td><span class="badge {{ 'success' if article.published else 'muted' }}">{{ "Publié" if article.published else "Brouillon" }}</span></td>
+                    <td>{{ article.updated_at|date_fr }}</td>
                     <td class="actions">
+                        {% if article.published %}
+                            <a class="button small" href="{{ url_for('web.article_detail', slug=article.slug) }}">Voir</a>
+                        {% endif %}
                         <a class="button small" href="{{ url_for('web.edit_article', article_id=article.id) }}">Modifier</a>
                         <form method="post" action="{{ url_for('web.delete_article', article_id=article.id) }}">
                             <button class="button danger small" type="submit">Supprimer</button>

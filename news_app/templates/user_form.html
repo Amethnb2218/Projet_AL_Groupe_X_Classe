@@ -2,28 +2,54 @@
 {% block title %}Utilisateur - AL News{% endblock %}
 {% block content %}
 <div class="form-panel">
-    <h1>Modifier l'utilisateur</h1>
-    <form method="post">
-        <label>
-            Login
-            <input name="login" required value="{{ user.login }}">
-        </label>
-        <label>
-            Nom complet
-            <input name="full_name" required value="{{ user.full_name }}">
-        </label>
-        <label>
-            Rôle
-            <select name="role">
-                <option value="editor" {% if user.role == 'editor' %}selected{% endif %}>Éditeur</option>
-                <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrateur</option>
-            </select>
-        </label>
-        <label>
-            Nouveau mot de passe
-            <input type="password" name="password">
-        </label>
-        <button class="button primary" type="submit">Enregistrer</button>
-    </form>
+    <div class="page-title compact">
+        <div>
+            <p class="eyebrow">Compte</p>
+            <h1>Modifier l'utilisateur</h1>
+            <p>{{ user.login }} · {{ "Administrateur" if user.role == "admin" else "Éditeur" }}</p>
+        </div>
+    </div>
+    <div class="editor-grid">
+        <form method="post">
+            <label>
+                Login
+                <input name="login" required value="{{ user.login }}">
+            </label>
+            <label>
+                Nom complet
+                <input name="full_name" required value="{{ user.full_name }}">
+            </label>
+            <label>
+                Rôle
+                <select name="role">
+                    <option value="editor" {% if user.role == 'editor' %}selected{% endif %}>Éditeur</option>
+                    <option value="admin" {% if user.role == 'admin' %}selected{% endif %}>Administrateur</option>
+                </select>
+            </label>
+            <label>
+                Nouveau mot de passe
+                <input type="password" name="password">
+            </label>
+            <button class="button primary" type="submit">Enregistrer</button>
+        </form>
+        <aside class="image-editor account-panel">
+            <h2>Profil</h2>
+            <div class="account-avatar">{{ user.full_name[:1] }}</div>
+            <dl class="definition-list">
+                <div>
+                    <dt>Login</dt>
+                    <dd>{{ user.login }}</dd>
+                </div>
+                <div>
+                    <dt>Rôle actuel</dt>
+                    <dd>{{ "Administrateur" if user.role == "admin" else "Éditeur" }}</dd>
+                </div>
+                <div>
+                    <dt>Créé le</dt>
+                    <dd>{{ user.created_at|date_fr }}</dd>
+                </div>
+            </dl>
+        </aside>
+    </div>
 </div>
 {% endblock %}
