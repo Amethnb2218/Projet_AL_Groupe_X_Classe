@@ -6,7 +6,11 @@
   "scripts": {
     "setup": "python -m pip install -r requirements.txt && python -m flask --app app init-db",
     "dev": "python -m flask --app app run --debug",
+    "dev:lan": "python -m flask --app app run --debug --host 0.0.0.0",
+    "dev:lan:5001": "python -m flask --app app run --debug --host 0.0.0.0 --port 5001",
     "start": "python -m flask --app app run",
+    "start:lan": "python -m flask --app app run --host 0.0.0.0",
+    "start:lan:5001": "python -m flask --app app run --host 0.0.0.0 --port 5001",
     "test": "pytest -q",
     "client": "python client.py"
   }
