@@ -188,6 +188,7 @@ flask --app app seed-content
 ```
 
 La commande est idempotente : elle peut etre relancee sans dupliquer les articles.
+Elle nettoie aussi les anciens doublons editoriaux crees par une precedente version du remplissage.
 
 ## Tester sur un telephone ou un autre appareil
 

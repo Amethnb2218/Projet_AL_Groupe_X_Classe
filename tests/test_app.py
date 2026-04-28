@@ -135,6 +135,40 @@ def test_seed_content_command_adds_editorial_articles(app, client):
     assert b"/static/images/articles/cybersouverainete-equipes-techniques-reprennent-main.png" in home.data
 
 
+def test_seed_content_command_removes_old_editorial_duplicates(app, client):
+    with app.app_context():
+        category = services.create_category("Culture", "Ancienne rubrique.")
+        editor = services.create_user("old-editor", "Ancien éditeur", "editor", "editor123")
+        for _index in range(2):
+            services.create_article(
+                "Culture numérique : les festivals inventent un nouveau public",
+                "Ancien doublon éditorial.",
+                "Ancien contenu dupliqué.",
+                category["id"],
+                editor["id"],
+                True,
+            )
+
+    runner = app.test_cli_runner()
+    result = runner.invoke(args=["seed-content"])
+    assert result.exit_code == 0
+
+    response = client.get("/api/articles")
+    assert response.status_code == 200
+    culture_articles = [
+        article
+        for article in response.json["articles"]
+        if article["title"] == "Culture numérique : les festivals inventent un nouveau public"
+    ]
+    assert len(culture_articles) == 1
+    assert culture_articles[0]["slug"] == "culture-numerique-festivals-nouveau-public"
+    assert len(response.json["articles"]) == 8
+
+    grouped = client.get("/api/articles/grouped")
+    culture = next(category for category in grouped.json["categories"] if category["slug"] == "culture")
+    assert len(culture["articles"]) == 1
+
+
 def test_home_lists_created_articles_and_pagination(client, sample_content):
     response = client.get("/")
     assert response.status_code == 200

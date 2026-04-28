@@ -62,6 +62,31 @@ def seed_db(db: sqlite3.Connection) -> None:
     )
 
 
+def deduplicate_editorial_articles(db: sqlite3.Connection, articles: list[tuple[str, str, str, str, str]]) -> None:
+    for title, slug, _summary, _content, _category_name in articles:
+        rows = db.execute(
+            """
+            SELECT id, slug
+            FROM articles
+            WHERE TRIM(title) = ?
+            ORDER BY
+                CASE WHEN slug = ? THEN 0 ELSE 1 END,
+                updated_at DESC,
+                created_at DESC,
+                id DESC
+            """,
+            (title.strip(), slug),
+        ).fetchall()
+        if not rows:
+            continue
+
+        kept = rows[0]
+        for duplicate in rows[1:]:
+            db.execute("DELETE FROM articles WHERE id = ?", (duplicate["id"],))
+        if kept["slug"] != slug:
+            db.execute("UPDATE articles SET slug = ? WHERE id = ?", (slug, kept["id"]))
+
+
 def seed_editorial_content() -> None:
     db = get_db()
     now = utc_now()
@@ -152,6 +177,8 @@ def seed_editorial_content() -> None:
             "Technologie",
         ),
     ]
+
+    deduplicate_editorial_articles(db, articles)
 
     for title, slug, summary, content, category_name in articles:
         db.execute(
