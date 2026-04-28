@@ -65,11 +65,11 @@
             <tbody>
                 {% for user in users %}
                     <tr>
-                        <td><strong>{{ user.login }}</strong></td>
-                        <td>{{ user.full_name }}</td>
-                        <td><span class="badge {{ 'admin' if user.role == 'admin' else 'success' }}">{{ "Éditeur" if user.role == "editor" else "Administrateur" }}</span></td>
-                        <td>{{ user.created_at|date_fr }}</td>
-                        <td class="actions">
+                        <td data-label="Login"><strong>{{ user.login }}</strong></td>
+                        <td data-label="Nom">{{ user.full_name }}</td>
+                        <td data-label="Rôle"><span class="badge {{ 'admin' if user.role == 'admin' else 'success' }}">{{ "Éditeur" if user.role == "editor" else "Administrateur" }}</span></td>
+                        <td data-label="Créé le">{{ user.created_at|date_fr }}</td>
+                        <td class="actions" data-label="Actions">
                             <a class="button small" href="{{ url_for('web.edit_user', user_id=user.id) }}">Modifier</a>
                             <form method="post" action="{{ url_for('web.delete_user', user_id=user.id) }}">
                                 <button class="button danger small" type="submit">Supprimer</button>

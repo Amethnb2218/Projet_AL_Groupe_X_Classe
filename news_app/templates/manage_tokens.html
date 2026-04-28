@@ -27,8 +27,8 @@
     </div>
 {% endif %}
 
-<div class="split">
-    <div class="form-panel">
+<div class="split management-split">
+    <div class="form-panel admin-form-card">
         <h2>Générer un jeton</h2>
         <form method="post">
             <label>
@@ -39,7 +39,7 @@
         </form>
     </div>
 
-    <div class="table-wrap">
+    <div class="table-wrap admin-table">
         <table>
             <thead>
                 <tr>
@@ -52,10 +52,10 @@
             <tbody>
                 {% for token in tokens %}
                     <tr>
-                        <td><strong>{{ token.label }}</strong></td>
-                        <td>{{ token.creator_login }}</td>
-                        <td>{{ token.created_at|date_fr }}</td>
-                        <td>
+                        <td data-label="Libellé"><strong>{{ token.label }}</strong></td>
+                        <td data-label="Créé par">{{ token.creator_login }}</td>
+                        <td data-label="Date">{{ token.created_at|date_fr }}</td>
+                        <td class="actions" data-label="Actions">
                             <form method="post" action="{{ url_for('web.delete_token', token_id=token.id) }}">
                                 <button class="button danger small" type="submit">Supprimer</button>
                             </form>

@@ -83,6 +83,8 @@ def test_frontend_uses_images_and_keeps_hero_titles_readable(client):
     assert b"african-journalist-fallback.png" in response.data
     assert b".hero-copy h1" in response.data
     assert b"hyphens: none" in response.data
+    assert b"content: attr(data-label)" in response.data
+    assert b"overflow-x: visible" in response.data
 
     image = client.get("/static/images/african-journalist-fallback.png")
     assert image.status_code == 200
@@ -173,7 +175,22 @@ def test_editor_can_manage_articles_but_not_users(client, sample_content):
     assert articles.status_code == 200
     assert b"table-thumb large" in articles.data
     assert b"admin-table" in articles.data
+    assert b'data-label="Actions"' in articles.data
     assert client.get("/admin/users").status_code == 403
+
+
+def test_admin_tables_are_responsive_without_horizontal_scroll(client, sample_content):
+    login(client)
+    users = client.get("/admin/users")
+    assert users.status_code == 200
+    assert b"admin-table" in users.data
+    assert b'data-label="Login"' in users.data
+    assert b'data-label="Actions"' in users.data
+
+    tokens = client.get("/admin/tokens")
+    assert tokens.status_code == 200
+    assert b"admin-table" in tokens.data
+    assert b'data-label="Date"' in tokens.data
 
 
 def test_admin_pages_require_login(client):

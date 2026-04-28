@@ -41,22 +41,22 @@
             {% for article in articles %}
                 {% set image_url = article_image_url(article) %}
                 <tr>
-                    <td class="table-thumb large">
+                    <td class="table-thumb large" data-label="Visuel">
                         {% if image_url %}
                             <img src="{{ image_url }}" alt="">
                         {% else %}
                             <span class="thumb-placeholder">Sans image</span>
                         {% endif %}
                     </td>
-                    <td class="table-title">
+                    <td class="table-title" data-label="Article">
                         <strong>{{ article.title }}</strong>
                         <span>{{ article.summary }}</span>
                         <small>{{ article.author_name }}</small>
                     </td>
-                    <td>{{ article.category_name }}</td>
-                    <td><span class="badge {{ 'success' if article.published else 'muted' }}">{{ "Publié" if article.published else "Brouillon" }}</span></td>
-                    <td>{{ article.updated_at|date_fr }}</td>
-                    <td class="actions">
+                    <td data-label="Catégorie">{{ article.category_name }}</td>
+                    <td data-label="Statut"><span class="badge {{ 'success' if article.published else 'muted' }}">{{ "Publié" if article.published else "Brouillon" }}</span></td>
+                    <td data-label="Mise à jour">{{ article.updated_at|date_fr }}</td>
+                    <td class="actions" data-label="Actions">
                         {% if article.published %}
                             <a class="button small" href="{{ url_for('web.article_detail', slug=article.slug) }}">Voir</a>
                         {% endif %}
