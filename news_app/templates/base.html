@@ -7,13 +7,18 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
 <body>
-    <header class="topbar">
+    <header class="topbar" data-site-header>
         <div class="topbar-inner">
             <a class="brand" href="{{ url_for('web.home') }}">
                 <span class="brand-mark">AL</span>
                 <span class="brand-word">News</span>
             </a>
-            <nav class="main-nav" aria-label="Navigation principale">
+            <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="primary-navigation user-session" aria-label="Ouvrir le menu" data-menu-toggle>
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            <nav id="primary-navigation" class="main-nav" aria-label="Navigation principale">
                 <a href="{{ url_for('web.home') }}">Accueil</a>
                 <a href="{{ url_for('web.categories') }}">Catégories</a>
                 {% if g.user %}
@@ -25,7 +30,7 @@
                     {% endif %}
                 {% endif %}
             </nav>
-            <div class="session">
+            <div id="user-session" class="session">
                 {% if g.user %}
                     <span>{{ g.user.full_name }} ({{ "Éditeur" if g.user.role == "editor" else "Administrateur" }})</span>
                     <form method="post" action="{{ url_for('web.logout') }}">
@@ -98,6 +103,7 @@
         <span>AL News</span>
         <span>Journal numérique indépendant</span>
     </footer>
+    <script src="{{ url_for('static', filename='site-menu.js') }}" defer></script>
     {% block scripts %}{% endblock %}
 </body>
 </html>

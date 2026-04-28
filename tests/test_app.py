@@ -85,6 +85,8 @@ def test_frontend_uses_images_and_keeps_hero_titles_readable(client):
     assert b"hyphens: none" in response.data
     assert b"content: attr(data-label)" in response.data
     assert b"overflow-x: visible" in response.data
+    assert b".topbar.is-menu-open .main-nav" in response.data
+    assert b".menu-toggle" in response.data
 
     image = client.get("/static/images/african-journalist-fallback.png")
     assert image.status_code == 200
@@ -93,6 +95,20 @@ def test_frontend_uses_images_and_keeps_hero_titles_readable(client):
     script = client.get("/static/editor-preview.js")
     assert script.status_code == 200
     assert b"data-image-input" in script.data
+
+    menu_script = client.get("/static/site-menu.js")
+    assert menu_script.status_code == 200
+    assert b"aria-expanded" in menu_script.data
+    assert b"is-menu-open" in menu_script.data
+
+
+def test_mobile_menu_button_is_available_on_public_pages(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert b"data-menu-toggle" in response.data
+    assert b'id="primary-navigation"' in response.data
+    assert b'id="user-session"' in response.data
+    assert b"site-menu.js" in response.data
 
 
 def test_seed_content_command_adds_editorial_articles(app, client):
