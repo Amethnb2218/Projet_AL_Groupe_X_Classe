@@ -210,7 +210,7 @@ a:hover {
 }
 
 .sidebar-card,
-.service-panel {
+.ad-panel {
     background: rgba(255, 255, 255, 0.94);
     border: 1px solid var(--line);
     border-radius: 8px;
@@ -219,7 +219,7 @@ a:hover {
 }
 
 .sidebar h2,
-.service-panel h2 {
+.ad-panel h2 {
     color: var(--ink);
     font-size: 0.74rem;
     font-weight: 900;
@@ -253,44 +253,64 @@ a:hover {
     color: var(--primary);
 }
 
-.service-panel {
-    background: #111724;
-    border-color: #111724;
+.ad-panel {
+    background:
+        linear-gradient(180deg, rgba(16, 20, 31, 0.2), rgba(16, 20, 31, 0.84)),
+        url("/static/images/articles/startups-africaines-qualite-logicielle-strategique.png");
+    background-position: center;
+    background-size: cover;
     color: white;
+    min-height: 260px;
+    overflow: hidden;
+    position: relative;
 }
 
-.service-panel h2 {
-    color: #f8fafc;
+.ad-panel::after {
+    background: rgba(255, 255, 255, 0.12);
+    content: "";
+    height: 1px;
+    left: 18px;
+    position: absolute;
+    right: 18px;
+    top: 52px;
 }
 
-.service-panel a {
-    align-items: center;
-    border: 1px solid rgba(255, 255, 255, 0.12);
-    border-radius: 7px;
-    color: white;
-    display: flex;
-    justify-content: space-between;
-    min-height: 48px;
-    padding: 10px 12px;
-}
-
-.service-panel a + a {
-    margin-top: 8px;
-}
-
-.service-panel a:hover {
-    background: rgba(255, 255, 255, 0.08);
-    color: white;
-}
-
-.service-panel span {
-    color: #cbd5e1;
-    font-size: 0.75rem;
+.ad-label {
+    color: #f5c46a;
+    display: inline-flex;
+    font-size: 0.72rem;
+    font-weight: 900;
+    letter-spacing: 0.08em;
+    margin-bottom: 42px;
     text-transform: uppercase;
 }
 
-.service-panel strong {
-    font-size: 0.98rem;
+.ad-panel h2 {
+    color: white;
+    font-family: Georgia, "Times New Roman", serif;
+    font-size: 1.7rem;
+    line-height: 1;
+    margin: 0 0 10px;
+    text-transform: none;
+}
+
+.ad-panel p {
+    color: #edf2f7;
+    font-weight: 650;
+    margin: 0 0 18px;
+}
+
+.ad-panel a {
+    background: white;
+    border-radius: 7px;
+    color: var(--ink);
+    display: inline-flex;
+    font-weight: 900;
+    padding: 9px 12px;
+}
+
+.ad-panel a:hover {
+    color: var(--primary);
 }
 
 .topic-strip {

@@ -62,20 +62,11 @@
                     {% endfor %}
                 </ul>
             </div>
-            <div class="service-panel">
-                <h2>Services web</h2>
-                <a href="{{ url_for('api.articles') }}">
-                    <span>REST</span>
-                    <strong>JSON</strong>
-                </a>
-                <a href="{{ url_for('api.articles', format='xml') }}">
-                    <span>REST</span>
-                    <strong>XML</strong>
-                </a>
-                <a href="{{ url_for('soap.soap_endpoint') }}">
-                    <span>SOAP</span>
-                    <strong>Utilisateurs</strong>
-                </a>
+            <div class="ad-panel" aria-label="Publicité">
+                <span class="ad-label">Publicité</span>
+                <h2>Campus Digital</h2>
+                <p>Formez votre équipe aux API, à la sécurité et aux architectures web modernes.</p>
+                <a href="{{ url_for('web.categories') }}">Découvrir les dossiers</a>
             </div>
         </aside>
 

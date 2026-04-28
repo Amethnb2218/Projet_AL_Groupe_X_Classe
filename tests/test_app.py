@@ -111,6 +111,15 @@ def test_mobile_menu_button_is_available_on_public_pages(client):
     assert b"site-menu.js" in response.data
 
 
+def test_sidebar_uses_ad_panel_instead_of_service_links(client):
+    response = client.get("/")
+    assert response.status_code == 200
+    assert b"ad-panel" in response.data
+    assert "Publicité".encode("utf-8") in response.data
+    assert b"service-panel" not in response.data
+    assert b"Services web" not in response.data
+
+
 def test_seed_content_command_adds_editorial_articles(app, client):
     runner = app.test_cli_runner()
     result = runner.invoke(args=["seed-content"])
